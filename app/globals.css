@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --border: #e6e8ef;
+}
+
+html, body {
+  background: var(--bg);
+  color: #0f172a;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  border-color: var(--border);
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl border border-ink-200/70 shadow-card;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-full;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply btn bg-brand-500 text-white hover:bg-brand-600 shadow-sm;
+  }
+  .btn-ghost {
+    @apply btn text-ink-700 hover:bg-ink-100;
+  }
+  .btn-outline {
+    @apply btn border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
+  }
+  .kpi-label {
+    @apply text-xs font-medium text-ink-500 uppercase tracking-wider;
+  }
+  .kpi-value {
+    @apply text-2xl font-semibold text-ink-900 tracking-tight;
+  }
+  .section-title {
+    @apply text-base font-semibold text-ink-900;
+  }
+  .subtle {
+    @apply text-sm text-ink-500;
+  }
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-ink-600 hover:bg-ink-100 hover:text-ink-900 transition-colors;
+  }
+  .nav-link-active {
+    @apply bg-brand-50 text-brand-700 hover:bg-brand-100 hover:text-brand-800;
+  }
+  .table-th {
+    @apply text-left text-xs font-semibold uppercase tracking-wider text-ink-500 px-4 py-3 bg-ink-50/60;
+  }
+  .table-td {
+    @apply px-4 py-3 text-sm text-ink-800 border-t border-ink-100;
+  }
+}
+
+/* Recharts tweaks */
+.recharts-cartesian-axis-tick-value {
+  font-size: 11px;
+  fill: #64748b;
+}
+.recharts-default-tooltip {
+  border-radius: 10px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 30px -10px rgb(15 23 42 / 0.15) !important;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animations */
+@keyframes ff-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes ff-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes ff-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes ff-bounce-in {
+  0% { transform: scale(0.85); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.ff-fade-in { animation: ff-fade-in .18s ease-out both; }
+.ff-slide-up { animation: ff-slide-up .28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.ff-pop { animation: ff-pop .28s ease-out; }
+.ff-bounce-in { animation: ff-bounce-in .32s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Grain pattern for hero */
+.ff-grain {
+  background-image:
+    radial-gradient(at 20% 10%, rgba(255, 180, 84, 0.35) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(255, 100, 50, 0.35) 0px, transparent 45%),
+    radial-gradient(at 0% 80%, rgba(255, 140, 40, 0.30) 0px, transparent 50%),
+    radial-gradient(at 90% 90%, rgba(254, 199, 90, 0.25) 0px, transparent 50%);
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+  border: 2px solid #f6f7fb;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}

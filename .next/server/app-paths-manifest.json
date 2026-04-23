@@ -1,0 +1,21 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/customers/page": "app/customers/page.js",
+  "/delivery/page": "app/delivery/page.js",
+  "/expenses/page": "app/expenses/page.js",
+  "/inventory/page": "app/inventory/page.js",
+  "/kds/page": "app/kds/page.js",
+  "/login/page": "app/login/page.js",
+  "/menu/page": "app/menu/page.js",
+  "/orders/page": "app/orders/page.js",
+  "/page": "app/page.js",
+  "/promotions/page": "app/promotions/page.js",
+  "/reports/page": "app/reports/page.js",
+  "/staff/page": "app/staff/page.js",
+  "/settings/page": "app/settings/page.js",
+  "/tables/page": "app/tables/page.js",
+  "/waiter/page": "app/waiter/page.js",
+  "/wastage/page": "app/wastage/page.js",
+  "/qr/[tableCode]/page": "app/qr/[tableCode]/page.js",
+  "/qr/order/[id]/page": "app/qr/order/[id]/page.js"
+}

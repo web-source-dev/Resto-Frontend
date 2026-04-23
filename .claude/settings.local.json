@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew list *)",
+      "Bash(python3 -c \"import PyPDF2\")",
+      "Bash(python3 -c \"import pypdf\")",
+      "Bash(python3 -c \"import fitz\")",
+      "Bash(pip3 install *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -fsS -o /dev/null http://localhost:3000/login)",
+      "Bash(curl *)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs -I {} kill -9 {})"
+    ]
+  }
+}

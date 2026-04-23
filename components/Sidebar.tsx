@@ -1,0 +1,159 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  ReceiptText,
+  ChefHat,
+  LayoutGrid,
+  UtensilsCrossed,
+  Boxes,
+  Trash2,
+  Users,
+  UserRound,
+  BarChart3,
+  Settings,
+  Flame,
+  Sparkles,
+  ClipboardCheck,
+  Bike,
+  Ticket,
+} from "lucide-react";
+import clsx from "clsx";
+import { useAuth } from "@/lib/AuthProvider";
+import { canAccess, Role } from "@/lib/roles";
+
+type NavItem = { href: string; label: string; icon: any };
+
+const all: {
+  title: string;
+  items: NavItem[];
+}[] = [
+  {
+    title: "Operate",
+    items: [
+      { href: "/", label: "Overview", icon: LayoutDashboard },
+      { href: "/waiter", label: "My Section", icon: ClipboardCheck },
+      { href: "/delivery", label: "Dispatch", icon: Bike },
+      { href: "/orders", label: "Orders", icon: ReceiptText },
+      { href: "/kds", label: "Kitchen Display", icon: ChefHat },
+      { href: "/tables", label: "Tables", icon: LayoutGrid },
+    ],
+  },
+  {
+    title: "Kitchen & Stock",
+    items: [
+      { href: "/menu", label: "Menu & Recipes", icon: UtensilsCrossed },
+      { href: "/inventory", label: "Inventory", icon: Boxes },
+      { href: "/expenses", label: "Expenses & Wastage", icon: Trash2 },
+    ],
+  },
+  {
+    title: "People",
+    items: [
+      { href: "/staff", label: "Staff", icon: Users },
+      { href: "/customers", label: "Customers", icon: UserRound },
+    ],
+  },
+  {
+    title: "Insights",
+    items: [
+      { href: "/promotions", label: "Promotions", icon: Ticket },
+      { href: "/reports", label: "Reports", icon: BarChart3 },
+      { href: "/settings", label: "Settings", icon: Settings },
+    ],
+  },
+];
+
+function Section({
+  title,
+  items,
+  pathname,
+  role,
+}: {
+  title: string;
+  items: NavItem[];
+  pathname: string;
+  role: string | undefined;
+}) {
+  const visible = items.filter((it) => canAccess(role as Role, it.href));
+  if (visible.length === 0) return null;
+  return (
+    <div className="px-3">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-400 px-3 mb-2 mt-5">
+        {title}
+      </p>
+      <div className="space-y-0.5">
+        {visible.map((it) => {
+          const active =
+            it.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(it.href);
+          const Icon = it.icon;
+          return (
+            <Link
+              key={it.href}
+              href={it.href}
+              className={clsx("nav-link", active && "nav-link-active")}
+            >
+              <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
+              <span>{it.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function Sidebar() {
+  const pathname = usePathname() ?? "/";
+  const { user } = useAuth();
+  return (
+    <aside className="w-64 shrink-0 border-r border-ink-200/70 bg-white hidden lg:flex flex-col sticky top-0 h-screen">
+      <div className="h-16 px-5 flex items-center gap-2.5 border-b border-ink-200/70">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-sm">
+          <Flame className="w-5 h-5 text-white" strokeWidth={2.5} />
+        </div>
+        <div className="leading-tight">
+          <div className="font-semibold text-ink-900 text-[15px] tracking-tight">
+            FlavorFlow
+          </div>
+          <div className="text-[11px] text-ink-500 capitalize">
+            {user?.role ? `${user.role} · Console` : "RMS · Admin Console"}
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto pt-2 pb-6">
+        {all.map((sec) => (
+          <Section
+            key={sec.title}
+            title={sec.title}
+            items={sec.items}
+            pathname={pathname}
+            role={user?.role}
+          />
+        ))}
+      </nav>
+
+      {(user?.role === "admin" || user?.role === "manager") && (
+        <div className="p-3">
+          <div className="rounded-xl bg-gradient-to-br from-ink-900 to-ink-800 text-white p-4 relative overflow-hidden">
+            <Sparkles className="w-4 h-4 text-brand-300 mb-2" />
+            <div className="font-semibold text-sm leading-snug">
+              Enable AI demand forecasting
+            </div>
+            <p className="text-[12px] text-ink-300 mt-1 leading-snug">
+              Predict tomorrow&apos;s rush, reorder stock automatically.
+            </p>
+            <button className="mt-3 w-full text-xs font-medium bg-white text-ink-900 rounded-md py-1.5 hover:bg-ink-100 transition-colors">
+              Try Phase 3 preview
+            </button>
+          </div>
+        </div>
+      )}
+    </aside>
+  );
+}

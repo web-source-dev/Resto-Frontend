@@ -1,0 +1,140 @@
+"use client";
+
+import { Flame } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "@/lib/AuthProvider";
+
+const demos = [
+  { role: "Admin", email: "admin@flavorflow.dev", password: "admin123" },
+  { role: "Manager", email: "manager@flavorflow.dev", password: "manager123" },
+  { role: "Receptionist", email: "receptionist@flavorflow.dev", password: "recept123" },
+  { role: "Waiter", email: "waiter@flavorflow.dev", password: "waiter123" },
+  { role: "Kitchen", email: "kitchen@flavorflow.dev", password: "kitchen123" },
+  { role: "Rider", email: "rider@flavorflow.dev", password: "rider123" },
+];
+
+export default function LoginPage() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState("admin@flavorflow.dev");
+  const [password, setPassword] = useState("admin123");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      await login(email, password);
+    } catch (err: any) {
+      setError(err.message ?? "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function quick(d: (typeof demos)[number]) {
+    setEmail(d.email);
+    setPassword(d.password);
+    setError(null);
+    setLoading(true);
+    try {
+      await login(d.email, d.password);
+    } catch (err: any) {
+      setError(err.message ?? "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-ink-50 via-white to-brand-50">
+      <div className="w-full max-w-md">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-pop">
+            <Flame className="w-6 h-6 text-white" strokeWidth={2.5} />
+          </div>
+          <div>
+            <div className="font-bold text-ink-900 text-xl tracking-tight">
+              FlavorFlow
+            </div>
+            <div className="text-xs text-ink-500">RMS · Multi-role Console</div>
+          </div>
+        </div>
+
+        <div className="card p-7">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
+            Welcome back
+          </h1>
+          <p className="subtle mt-1">Sign in to your restaurant dashboard</p>
+
+          <form onSubmit={onSubmit} className="mt-6 space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-ink-700 mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full h-11 px-3 rounded-lg border border-ink-200 bg-white focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-ink-700 mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full h-11 px-3 rounded-lg border border-ink-200 bg-white focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none text-sm"
+              />
+            </div>
+
+            {error && (
+              <div className="text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full h-11 disabled:opacity-60"
+            >
+              {loading ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+
+          <div className="mt-5 pt-5 border-t border-ink-100">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-500 mb-2">
+              Test any role instantly
+            </p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {demos.map((d) => (
+                <button
+                  key={d.email}
+                  onClick={() => quick(d)}
+                  disabled={loading}
+                  className="text-xs font-medium px-2 py-2 rounded-lg bg-ink-50 text-ink-700 hover:bg-ink-100 border border-ink-200 disabled:opacity-50"
+                >
+                  {d.role}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-ink-400 mt-2 leading-snug">
+              Each role lands on a different default view with permissions from PRD §5.
+            </p>
+          </div>
+        </div>
+
+        <p className="text-center text-[11px] text-ink-400 mt-6">
+          v1.0 · Built from PRD · 5 operational surfaces, one source of truth.
+        </p>
+      </div>
+    </div>
+  );
+}
