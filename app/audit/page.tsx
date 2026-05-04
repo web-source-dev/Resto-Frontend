@@ -112,7 +112,15 @@ export default function AuditPage() {
       before: it.before ? jsonOneLine(it.before) : "",
       after: it.after ? jsonOneLine(it.after) : "",
     }));
-    downloadText(`activity-${new Date().toISOString().slice(0, 10)}.csv`, toCSV(rows), "text/csv");
+    downloadText(`activity-${new Date().toISOString().slice(0, 10)}.csv`, toCSV(rows, [
+      { key: "time", header: "Time" },
+      { key: "action", header: "Action" },
+      { key: "group", header: "Group" },
+      { key: "user", header: "User" },
+      { key: "target", header: "Target" },
+      { key: "before", header: "Before" },
+      { key: "after", header: "After" },
+    ]), "text/csv");
   }
 
   return (
