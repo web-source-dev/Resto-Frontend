@@ -20,8 +20,11 @@ const access: Record<string, Role[]> = {
   "/customers": ["admin", "manager", "receptionist"],
   "/reports": ["admin", "manager"],
   "/settings": ["admin", "manager"],
+  "/audit": ["admin"],
   "/promotions": ["admin", "manager"],
-  "/waiter": ["admin", "manager", "waiter"],
+  // "My Section" is a personal floor view for waiters only. Admins and
+  // managers oversee from /orders and /tables.
+  "/waiter": ["waiter"],
   "/delivery": ["admin", "manager", "rider", "receptionist"],
 };
 
@@ -72,9 +75,12 @@ export function canPerform(
   switch (action) {
     case "menu.write":
     case "menu.delete":
-      return ["admin", "manager"].includes(r);
+      // Menu + recipes are revenue/COGS-sensitive — admin only.
+      return r === "admin";
     case "inventory.write":
-      return ["admin", "manager", "kitchen", "receptionist"].includes(r);
+      // Stock add/adjust restricted to admin + manager (kitchen and reception
+      // can still see stock and trigger consumption via orders/wastage).
+      return ["admin", "manager"].includes(r);
     case "wastage.approve":
       return ["admin", "manager"].includes(r);
     case "staff.manage":

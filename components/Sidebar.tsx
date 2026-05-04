@@ -18,6 +18,7 @@ import {
   Sparkles,
   ClipboardCheck,
   Bike,
+  Shield,
   Ticket,
 } from "lucide-react";
 import clsx from "clsx";
@@ -61,6 +62,7 @@ export const NAV_SECTIONS: {
     items: [
       { href: "/promotions", label: "Promotions", icon: Ticket },
       { href: "/reports", label: "Reports", icon: BarChart3 },
+      { href: "/audit", label: "Activity Log", icon: Shield },
       { href: "/settings", label: "Settings", icon: Settings },
     ],
   },

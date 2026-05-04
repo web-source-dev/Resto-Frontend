@@ -28,6 +28,7 @@ export default function InventoryPage() {
   const toast = useToast();
   const { user } = useAuth();
   const canPO = canPerform(user?.role, "po.create");
+  const canWriteInventory = canPerform(user?.role, "inventory.write");
 
   const onEvt = useCallback(() => {
     refresh();
@@ -105,9 +106,11 @@ export default function InventoryPage() {
                 <FileText className="w-4 h-4" /> New PO
               </button>
             )}
-            <button className="btn-primary" onClick={() => setAdding(true)}>
-              <Plus className="w-4 h-4" /> Add ingredient
-            </button>
+            {canWriteInventory && (
+              <button className="btn-primary" onClick={() => setAdding(true)}>
+                <Plus className="w-4 h-4" /> Add ingredient
+              </button>
+            )}
           </>
         }
       />
@@ -223,12 +226,16 @@ export default function InventoryPage() {
                           <StatusBadge status={i.status} />
                         </td>
                         <td className="table-td text-right">
-                          <button
-                            onClick={() => setAdjust(i)}
-                            className="text-xs font-medium text-brand-600 hover:text-brand-700"
-                          >
-                            Adjust
-                          </button>
+                          {canWriteInventory ? (
+                            <button
+                              onClick={() => setAdjust(i)}
+                              className="text-xs font-medium text-brand-600 hover:text-brand-700"
+                            >
+                              Adjust
+                            </button>
+                          ) : (
+                            <span className="text-xs text-ink-300">—</span>
+                          )}
                         </td>
                       </tr>
                     );

@@ -46,12 +46,11 @@ export function NotificationsPanel() {
 
   useEffect(() => {
     load();
-    const i = setInterval(load, 30000);
-    return () => clearInterval(i);
   }, [load]);
 
+  // Server already routes `notification:new` only to this user/role (see services/notify.ts),
+  // so a single socket-driven refetch is enough — no polling, no `data:changed` echo.
   useSocketEvent("notification:new", () => load());
-  useSocketEvent("data:changed", () => load());
 
   useEffect(() => {
     if (!open) return;

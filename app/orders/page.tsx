@@ -175,11 +175,22 @@ export default function OrdersPage() {
 
   const filterCount = Object.values(advFilter).filter(Boolean).length;
 
+  // Waiters only work the floor — strip non-dine-in channel chips and the
+  // channel select from advanced filters. The backend enforces this too.
+  const isWaiter = user?.role === "waiter";
+  const filterChips = isWaiter
+    ? ["All", "Pending", "Overdue", "Ready", "Completed"]
+    : ["All", "Pending", "Dine-in", "Takeaway", "Delivery", "Overdue", "Ready", "Completed"];
+
   return (
     <>
       <PageHeader
         title="Orders"
-        subtitle="All channels · dine-in, takeaway, delivery, phone"
+        subtitle={
+          isWaiter
+            ? "Dine-in floor · your tables"
+            : "All channels · dine-in, takeaway, delivery, phone"
+        }
         right={
           <>
             <button className="btn-outline" onClick={exportCSV}>
@@ -278,8 +289,7 @@ export default function OrdersPage() {
         pad={false}
       >
         <div className="flex items-center gap-2 overflow-x-auto px-5 py-3 border-t border-ink-100 bg-ink-50/40 text-xs">
-          {["All", "Pending", "Dine-in", "Takeaway", "Delivery", "Overdue", "Ready", "Completed"].map(
-            (f) => (
+          {filterChips.map((f) => (
               <button
                 key={f}
                 onClick={() => {
@@ -502,21 +512,23 @@ export default function OrdersPage() {
             />
           </Field>
         </div>
-        <Field label="Channel">
-          <Select
-            value={advFilter.channel ?? ""}
-            onChange={(e) =>
-              setAdvFilter({ ...advFilter, channel: e.target.value || undefined })
-            }
-          >
-            <option value="">Any</option>
-            {["Dine-in", "Takeaway", "Delivery", "Phone"].map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </Select>
-        </Field>
+        {!isWaiter && (
+          <Field label="Channel">
+            <Select
+              value={advFilter.channel ?? ""}
+              onChange={(e) =>
+                setAdvFilter({ ...advFilter, channel: e.target.value || undefined })
+              }
+            >
+              <option value="">Any</option>
+              {["Dine-in", "Takeaway", "Delivery", "Phone"].map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        )}
         <Field label="Status">
           <Select
             value={advFilter.status ?? ""}
@@ -566,6 +578,8 @@ export default function OrdersPage() {
         open={!!detailOrder}
         order={detailOrder}
         onClose={() => setDetailOrder(null)}
+        userRole={user?.role}
+        onChanged={refresh}
       />
     </>
   );

@@ -164,13 +164,7 @@ export default function SettingsPage() {
           icon: Bell,
           name: "Notification templates",
           desc: () => "SMS · WhatsApp · Email · Push · variables",
-        },
-        {
-          key: "webhooks",
-          icon: Webhook,
-          name: "Outbound webhooks",
-          desc: () => "Forward events to external URLs · HMAC-signed",
-        },
+        }
       ],
     },
     {
@@ -192,28 +186,7 @@ export default function SettingsPage() {
                   o.requireMfa ? " · MFA required" : ""
                 }`
               : "—",
-        },
-        {
-          key: "apiKeys",
-          icon: KeyRound,
-          name: "API keys",
-          desc: () => "Personal access tokens for third-party integrations",
-        },
-        {
-          key: "audit",
-          icon: FileText,
-          name: "Audit log",
-          desc: () => "Every sensitive action · immutable",
-        },
-        {
-          key: "backup",
-          icon: Database,
-          name: "Backups & data retention",
-          desc: (o) =>
-            o
-              ? `Retain orders ${o.retainOrderHistoryDays ?? 365}d · download full backup`
-              : "—",
-        },
+        }
       ],
     },
   ];
@@ -282,38 +255,6 @@ export default function SettingsPage() {
             <button onClick={logout} className="btn-outline w-full">
               Sign out
             </button>
-          </Card>
-
-          <Card title="MVP roadmap" subtitle="From PRD · track phase rollout">
-            <div className="space-y-3">
-              <Phase label="Phase 1 · MVP" progress={100} done />
-              <Phase
-                label="Phase 2 · Promos, shifts, waitlist, multi-outlet, anomalies"
-                progress={100}
-                done
-              />
-              <Phase
-                label="Phase 3 · AI forecasting, franchise mode"
-                progress={18}
-              />
-            </div>
-          </Card>
-
-          <Card title="System" subtitle="API connection">
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-ink-500">API base</span>
-                <span className="font-mono text-xs">localhost:4000</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-ink-500">DB</span>
-                <span className="font-semibold">MongoDB Atlas</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-ink-500">Real-time</span>
-                <span className="font-semibold">Socket.io</span>
-              </div>
-            </div>
           </Card>
         </div>
       </div>

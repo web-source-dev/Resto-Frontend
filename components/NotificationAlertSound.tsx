@@ -6,7 +6,21 @@ import {
   notificationSoundEnabled,
   playNotificationBeepDebounced,
   unlockAudioOutput,
+  type NotificationLevel,
 } from "@/lib/notificationSound";
+
+const VALID_LEVELS: ReadonlySet<NotificationLevel> = new Set([
+  "info",
+  "success",
+  "warn",
+  "error",
+]);
+
+function coerceLevel(v: unknown): NotificationLevel {
+  return typeof v === "string" && VALID_LEVELS.has(v as NotificationLevel)
+    ? (v as NotificationLevel)
+    : "info";
+}
 
 /**
  * When the backend emits `notification:new`, play a short sound if the tab is open.
@@ -29,16 +43,16 @@ export function NotificationAlertSound() {
     function onWindowMessage(e: MessageEvent) {
       if (e.data?.type !== "ff-push-received") return;
       if (!notificationSoundEnabled()) return;
-      void playNotificationBeepDebounced();
+      void playNotificationBeepDebounced(coerceLevel(e.data?.level));
     }
     window.addEventListener("message", onWindowMessage);
     return () => window.removeEventListener("message", onWindowMessage);
   }, []);
 
-  useSocketEvent("notification:new", () => {
+  useSocketEvent<{ level?: string }>("notification:new", (payload) => {
     if (!notificationSoundEnabled()) return;
     if (typeof document !== "undefined" && document.hidden) return;
-    void playNotificationBeepDebounced();
+    void playNotificationBeepDebounced(coerceLevel(payload?.level));
   });
 
   return null;

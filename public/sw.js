@@ -29,6 +29,7 @@ self.addEventListener("push", (event) => {
       let body = "You have a new notification.";
       let url = "/";
       let tag = `ff-${Date.now()}`;
+      let level = "info";
 
       if (event.data) {
         try {
@@ -38,6 +39,7 @@ self.addEventListener("push", (event) => {
             if (parsed.title) title = parsed.title;
             if (parsed.body != null && parsed.body !== "") body = String(parsed.body);
             if (parsed.url) url = parsed.url;
+            if (parsed.level) level = String(parsed.level);
             if (parsed.id) tag = String(parsed.id);
             else if (parsed.tag) tag = `${parsed.tag}-${parsed.ts ?? Date.now()}`;
           }
@@ -52,7 +54,7 @@ self.addEventListener("push", (event) => {
           includeUncontrolled: true,
         });
         for (const client of clientList) {
-          client.postMessage({ type: "ff-push-received" });
+          client.postMessage({ type: "ff-push-received", level });
         }
       } catch (_) {}
 

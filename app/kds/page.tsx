@@ -21,6 +21,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/Toaster";
 import { Modal } from "@/components/Modal";
 import { OrderDetailModal } from "@/components/OrderDetailModal";
+import { useAuth } from "@/lib/AuthProvider";
 
 const stationList = ["All", "Grill", "Fryer", "Cold", "Drinks", "Oven"];
 
@@ -297,6 +298,7 @@ function TicketCard({
 }
 
 export default function KdsPage() {
+  const { user } = useAuth();
   const { data, refresh } = useApi<{ orders: any[] }>(
     "/api/orders?active=true&limit=50"
   );
@@ -467,6 +469,8 @@ export default function KdsPage() {
         open={!!detailOrder}
         order={detailOrder}
         onClose={() => setDetailOrder(null)}
+        userRole={user?.role}
+        onChanged={refresh}
       />
     </>
   );
