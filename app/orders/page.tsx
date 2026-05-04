@@ -10,6 +10,7 @@ import {
   X as XIcon,
   ChefHat,
   Inbox,
+  Eye,
 } from "lucide-react";
 import { useApi } from "@/lib/useApi";
 import { useCallback, useMemo, useState } from "react";
@@ -21,6 +22,7 @@ import { useAuth } from "@/lib/AuthProvider";
 import { canPerform } from "@/lib/roles";
 import { Modal, Field, Input, Select } from "@/components/Modal";
 import { downloadText, toCSV, generatePdfReceipt } from "@/lib/export";
+import { OrderDetailModal } from "@/components/OrderDetailModal";
 
 const PAGE_SIZE = 25;
 
@@ -34,6 +36,7 @@ export default function OrdersPage() {
   const [filter, setFilter] = useState("All");
   const [q, setQ] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [detailOrder, setDetailOrder] = useState<any | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [advFilter, setAdvFilter] = useState<{
@@ -189,7 +192,7 @@ export default function OrdersPage() {
         }
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
         {stats.map((s) => {
           const toneMap: Record<string, string> = {
             amber: "text-amber-700",
@@ -235,6 +238,7 @@ export default function OrdersPage() {
                 canForward={canForward}
                 onForward={() => forward(o)}
                 onVoid={() => transition(o, "Cancelled")}
+                onView={() => setDetailOrder(o)}
               />
             ))}
           </div>
@@ -245,8 +249,8 @@ export default function OrdersPage() {
         title="All orders"
         subtitle={`${filtered.length} match`}
         right={
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
+            <div className="relative w-full sm:w-auto">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
               <input
                 placeholder="Order #, customer…"
@@ -255,7 +259,7 @@ export default function OrdersPage() {
                   setQ(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 pl-9 pr-3 rounded-lg bg-ink-50 border border-ink-200/60 focus:bg-white focus:outline-none text-sm w-56"
+                className="h-9 w-full rounded-lg border border-ink-200/60 bg-ink-50 pl-9 pr-3 text-sm focus:bg-white focus:outline-none sm:w-56"
               />
             </div>
             <button
@@ -273,7 +277,7 @@ export default function OrdersPage() {
         }
         pad={false}
       >
-        <div className="flex items-center gap-2 px-5 py-3 border-t border-ink-100 bg-ink-50/40 text-xs">
+        <div className="flex items-center gap-2 overflow-x-auto px-5 py-3 border-t border-ink-100 bg-ink-50/40 text-xs">
           {["All", "Pending", "Dine-in", "Takeaway", "Delivery", "Overdue", "Ready", "Completed"].map(
             (f) => (
               <button
@@ -282,7 +286,7 @@ export default function OrdersPage() {
                   setFilter(f);
                   setPage(1);
                 }}
-                className={`px-2.5 py-1 rounded-md font-medium ${
+                className={`shrink-0 px-2.5 py-1 rounded-md font-medium ${
                   filter === f
                     ? "bg-white border border-ink-200 text-ink-900 shadow-sm"
                     : "text-ink-500 hover:text-ink-800"
@@ -311,8 +315,30 @@ export default function OrdersPage() {
             </thead>
             <tbody>
               {paged.map((o: any) => (
-                <tr key={o.id} className="hover:bg-ink-50/60">
-                  <td className="table-td font-medium text-ink-900">{o.code}</td>
+                <tr
+                  key={o.id}
+                  className={`hover:bg-ink-50/60 ${
+                    (o.elapsedMin ?? 999) <= 2
+                      ? "bg-emerald-50/60"
+                      : (o.elapsedMin ?? 999) <= 5
+                      ? "bg-sky-50/40"
+                      : ""
+                  }`}
+                >
+                  <td className="table-td font-medium text-ink-900">
+                    <div className="flex items-center gap-1.5">
+                      <span>{o.code}</span>
+                      {(o.elapsedMin ?? 999) <= 2 ? (
+                        <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">
+                          New
+                        </span>
+                      ) : (o.elapsedMin ?? 999) <= 5 ? (
+                        <span className="rounded bg-sky-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700">
+                          Recent
+                        </span>
+                      ) : null}
+                    </div>
+                  </td>
                   <td className="table-td text-ink-600 tabular-nums">
                     {new Date(o.placedAt).toLocaleTimeString("en-US", {
                       hour: "2-digit",
@@ -337,8 +363,16 @@ export default function OrdersPage() {
                     <StatusBadge status={o.paymentStatus} />
                   </td>
                   <td className="table-td text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-2 flex-wrap">
                       <button
+                        type="button"
+                        onClick={() => setDetailOrder(o)}
+                        className="text-xs font-medium text-brand-600 hover:text-brand-700 inline-flex items-center gap-1"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> View
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => generatePdfReceipt(o)}
                         className="text-xs text-ink-500 hover:text-ink-800"
                         title="Print receipt"
@@ -347,6 +381,7 @@ export default function OrdersPage() {
                       </button>
                       {o.paymentStatus === "Pending" && (
                         <button
+                          type="button"
                           onClick={() => pay(o)}
                           className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
                         >
@@ -355,6 +390,7 @@ export default function OrdersPage() {
                       )}
                       {o.status === "Served" && (
                         <button
+                          type="button"
                           onClick={() => transition(o, "Completed")}
                           className="text-xs font-medium text-brand-600 hover:text-brand-700"
                         >
@@ -364,6 +400,7 @@ export default function OrdersPage() {
                       {canPerform(user?.role, "order.void") &&
                         ["Queued", "In Progress"].includes(o.status) && (
                           <button
+                            type="button"
                             onClick={() => transition(o, "Cancelled")}
                             className="text-xs font-medium text-rose-600 hover:text-rose-700"
                           >
@@ -387,7 +424,7 @@ export default function OrdersPage() {
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between px-5 py-3 border-t border-ink-100 text-xs text-ink-500">
+        <div className="flex flex-col gap-2 px-5 py-3 border-t border-ink-100 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
           <span>
             Page {page} of {totalPages} · showing {paged.length} of {filtered.length}
           </span>
@@ -445,7 +482,7 @@ export default function OrdersPage() {
           </>
         }
       >
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="From">
             <Input
               type="datetime-local"
@@ -524,6 +561,12 @@ export default function OrdersPage() {
         onClose={() => setModalOpen(false)}
         onCreated={refresh}
       />
+
+      <OrderDetailModal
+        open={!!detailOrder}
+        order={detailOrder}
+        onClose={() => setDetailOrder(null)}
+      />
     </>
   );
 }
@@ -533,17 +576,21 @@ function PendingRow({
   canForward,
   onForward,
   onVoid,
+  onView,
 }: {
   o: any;
   canForward: boolean;
   onForward: () => void;
   onVoid: () => void;
+  onView: () => void;
 }) {
   const pendingItems = (o.items ?? []).filter(
     (i: any) => i.status === "Pending"
   );
   const isAddendum = o.status !== "Pending" && pendingItems.length > 0;
   const waitingMin = o.elapsedMin ?? 0;
+  const isFresh = waitingMin <= 2;
+  const isRecent = waitingMin <= 5;
   const warn = waitingMin >= 3;
   const ringTone = isAddendum
     ? "bg-sky-50 border-sky-200"
@@ -553,7 +600,9 @@ function PendingRow({
     : "bg-amber-100 text-amber-700";
   return (
     <div
-      className={`flex items-center gap-3 p-3 rounded-xl border shadow-sm ${ringTone}`}
+      className={`flex flex-col gap-3 rounded-xl border p-3 shadow-sm sm:flex-row sm:items-center ${ringTone} ${
+        isFresh ? "ring-2 ring-emerald-100" : isRecent ? "ring-1 ring-sky-100" : ""
+      }`}
     >
       <div
         className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${iconTone}`}
@@ -585,6 +634,16 @@ function PendingRow({
               ⏱ {waitingMin}m waiting
             </span>
           )}
+          {isFresh && (
+            <span className="chip bg-emerald-100 text-emerald-700 font-semibold">
+              Just arrived
+            </span>
+          )}
+          {!isFresh && isRecent && (
+            <span className="chip bg-sky-100 text-sky-700 font-semibold">
+              New
+            </span>
+          )}
           {isAddendum && (
             <span className="chip bg-ink-100 text-ink-600">
               Order {o.status}
@@ -600,7 +659,7 @@ function PendingRow({
           {(isAddendum ? pendingItems.length : o.items?.length) > 3 ? " …" : ""}
         </p>
       </div>
-      <div className="text-right shrink-0">
+      <div className="shrink-0 text-left sm:text-right">
         <p className="font-bold tabular-nums">
           Rs {(o.total ?? 0).toLocaleString()}
         </p>
@@ -610,25 +669,36 @@ function PendingRow({
             : `${o.items?.length} items`}
         </p>
       </div>
-      {canForward && (
-        <div className="flex items-center gap-1 shrink-0">
-          {!isAddendum && (
+      <div className="flex flex-col items-stretch gap-2 shrink-0 self-start sm:self-auto sm:items-end">
+        <button
+          type="button"
+          onClick={onView}
+          className="btn-outline text-xs inline-flex items-center justify-center gap-1"
+        >
+          <Eye className="w-3.5 h-3.5" /> View details
+        </button>
+        {canForward && (
+          <div className="flex items-center gap-1">
+            {!isAddendum && (
+              <button
+                type="button"
+                onClick={onVoid}
+                className="btn-ghost text-xs text-rose-600 hover:text-rose-700"
+              >
+                Void
+              </button>
+            )}
             <button
-              onClick={onVoid}
-              className="btn-ghost text-xs text-rose-600 hover:text-rose-700"
+              type="button"
+              onClick={onForward}
+              className="btn-primary text-xs"
             >
-              Void
+              <ChefHat className="w-3.5 h-3.5" />{" "}
+              {isAddendum ? "Forward addendum" : "Forward to kitchen"}
             </button>
-          )}
-          <button
-            onClick={onForward}
-            className="btn-primary text-xs"
-          >
-            <ChefHat className="w-3.5 h-3.5" />{" "}
-            {isAddendum ? "Forward addendum" : "Forward to kitchen"}
-          </button>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

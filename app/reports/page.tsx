@@ -17,48 +17,94 @@ const types: Record<string, { color: string }> = {
   Dog: { color: "bg-rose-100 text-rose-700" },
 };
 
-const RANGES = [
-  { days: 7, label: "Last 7 days" },
-  { days: 30, label: "Last 30 days" },
-  { days: 90, label: "Last 90 days" },
-];
+const RANGE_PRESETS = [
+  { id: "today", label: "Today" },
+  { id: "yesterday", label: "Yesterday" },
+  { id: "last7", label: "Last 7 days" },
+  { id: "last30", label: "Last 30 days" },
+  { id: "last90", label: "Last 90 days" },
+] as const;
+
+type RangePreset = (typeof RANGE_PRESETS)[number]["id"] | "custom";
 
 export default function ReportsPage() {
-  const [days, setDays] = useState(30);
+  const [preset, setPreset] = useState<RangePreset>("last30");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
   const [rangeOpen, setRangeOpen] = useState(false);
   const [digestOpen, setDigestOpen] = useState(false);
   const toast = useToast();
 
-  const { data: summary } = useApi<any>("/api/reports/summary", [days]);
-  const { data: trend } = useApi<{ trend: any[] }>(
-    `/api/reports/trend?days=${days}`,
-    [days]
-  );
+  const query = (() => {
+    if (preset === "today") {
+      const d = new Date().toISOString().slice(0, 10);
+      return `from=${d}&to=${d}`;
+    }
+    if (preset === "yesterday") {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      const y = d.toISOString().slice(0, 10);
+      return `from=${y}&to=${y}`;
+    }
+    if (preset === "last7") return "days=7";
+    if (preset === "last90") return "days=90";
+    if (preset === "custom" && customFrom && customTo) {
+      return `from=${customFrom}&to=${customTo}`;
+    }
+    return "days=30";
+  })();
+
+  const { data: summary } = useApi<any>(`/api/reports/summary?${query}`, [query]);
+  const { data: trend } = useApi<{ trend: any[] }>(`/api/reports/trend?${query}`, [query]);
   const { data: me } = useApi<{ items: any[] }>("/api/reports/menu-engineering");
   const { data: anom } = useApi<{ anomalies: any[] }>("/api/reports/anomalies");
   const { data: overview } = useApi<any>("/api/overview");
 
-  const rangeLabel = RANGES.find((r) => r.days === days)?.label ?? `${days} days`;
+  const rangeLabel =
+    preset === "custom" && customFrom && customTo
+      ? `${customFrom} → ${customTo}`
+      : RANGE_PRESETS.find((r) => r.id === preset)?.label ?? "Last 30 days";
 
-  function exportAll() {
-    const matrix = me?.items ?? [];
-    const trendRows = trend?.trend ?? [];
-    const csv =
-      "Menu engineering (7d)\n" +
-      toCSV(matrix, [
-        { key: "name", header: "Item" },
-        { key: "qty", header: "Qty" },
-        { key: "profit", header: "Margin %" },
-        { key: "type", header: "Classification" },
-      ]) +
-      "\n\n\nDaily revenue trend\n" +
-      toCSV(trendRows, [
-        { key: "d", header: "Day" },
-        { key: "rev", header: "Revenue" },
-        { key: "prev", header: "Prev period" },
-      ]);
-    downloadText(`reports-${days}d-${Date.now()}.csv`, csv);
-    toast("Reports exported", "success");
+  async function exportAll() {
+    try {
+      const exp = await fetchExportRows(query);
+      const matrix = me?.items ?? [];
+      const trendRows = trend?.trend ?? [];
+      const csv =
+        `Report range,${rangeLabel}\n\n` +
+        "Orders\n" +
+        toCSV(exp.orders, [
+          { key: "code", header: "Order" },
+          { key: "placedAt", header: "Placed at", map: (v) => new Date(v).toLocaleString() },
+          { key: "channel", header: "Channel" },
+          { key: "tableCode", header: "Table" },
+          { key: "customerName", header: "Customer" },
+          { key: "items", header: "Items" },
+          { key: "subtotal", header: "Subtotal" },
+          { key: "tax", header: "Tax" },
+          { key: "service", header: "Service" },
+          { key: "total", header: "Total" },
+          { key: "status", header: "Status" },
+          { key: "paymentStatus", header: "Payment" },
+        ]) +
+        "\n\n\nMenu engineering\n" +
+        toCSV(matrix, [
+          { key: "name", header: "Item" },
+          { key: "qty", header: "Qty" },
+          { key: "profit", header: "Margin %" },
+          { key: "type", header: "Classification" },
+        ]) +
+        "\n\n\nDaily revenue trend\n" +
+        toCSV(trendRows, [
+          { key: "d", header: "Day" },
+          { key: "rev", header: "Revenue" },
+          { key: "prev", header: "Prev period" },
+        ]);
+      downloadText(`reports-${preset}-${Date.now()}.csv`, csv);
+      toast("Reports exported", "success");
+    } catch (e: any) {
+      toast(e.message ?? "Failed to export reports", "error");
+    }
   }
 
   return (
@@ -84,9 +130,9 @@ export default function ReportsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi
-          label={`Revenue (${days}d)`}
+          label={`Revenue (${rangeLabel})`}
           value={summary ? `Rs ${(summary.revenue / 1000).toFixed(0)}k` : "—"}
           tone="brand"
           icon={FileSpreadsheet}
@@ -199,15 +245,15 @@ export default function ReportsPage() {
         width="max-w-xs"
       >
         <div className="space-y-2">
-          {RANGES.map((r) => (
+          {RANGE_PRESETS.map((r) => (
             <button
-              key={r.days}
+              key={r.id}
               onClick={() => {
-                setDays(r.days);
+                setPreset(r.id);
                 setRangeOpen(false);
               }}
               className={`w-full text-left px-3 py-2.5 rounded-lg border ${
-                days === r.days
+                preset === r.id
                   ? "bg-brand-50 text-brand-700 border-brand-300"
                   : "border-ink-200 hover:bg-ink-50"
               }`}
@@ -215,6 +261,31 @@ export default function ReportsPage() {
               {r.label}
             </button>
           ))}
+          <div className="mt-3 rounded-lg border border-ink-200 p-3">
+            <p className="mb-2 text-xs font-semibold text-ink-600">Custom range</p>
+            <div className="grid grid-cols-1 gap-2">
+              <Input
+                type="date"
+                value={customFrom}
+                onChange={(e) => setCustomFrom(e.target.value)}
+              />
+              <Input
+                type="date"
+                value={customTo}
+                onChange={(e) => setCustomTo(e.target.value)}
+              />
+            </div>
+            <button
+              className="btn-primary mt-2 w-full"
+              disabled={!customFrom || !customTo}
+              onClick={() => {
+                setPreset("custom");
+                setRangeOpen(false);
+              }}
+            >
+              Apply custom range
+            </button>
+          </div>
         </div>
       </Modal>
 
@@ -224,6 +295,11 @@ export default function ReportsPage() {
       />
     </>
   );
+}
+
+async function fetchExportRows(query: string) {
+  const { api } = await import("@/lib/api");
+  return api.get<{ orders: any[] }>(`/api/reports/export?${query}`);
 }
 
 function Anomaly({
@@ -263,7 +339,7 @@ function ScheduleDigestModal({
   const toast = useToast();
   const [cadence, setCadence] = useState<"daily" | "weekly">("daily");
   const [time, setTime] = useState("08:00");
-  const [email, setEmail] = useState("gian.baio@premiumtransportgroup.com");
+  const [email, setEmail] = useState("");
   const STORAGE = "ff_digest_schedule";
 
   useEffect(() => {
@@ -311,7 +387,7 @@ function ScheduleDigestModal({
         </>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Cadence">
           <Select
             value={cadence}

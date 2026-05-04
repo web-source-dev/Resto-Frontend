@@ -99,7 +99,7 @@ export default function CustomersPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card p-5">
           <p className="kpi-label">Total customers</p>
           <p className="kpi-value mt-1.5">{summary.total ?? 0}</p>
@@ -228,8 +228,8 @@ export default function CustomersPage() {
                     : "border-ink-100"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-semibold text-ink-900">
                       {r.customerName ?? "Anonymous"}
                     </span>
@@ -383,7 +383,7 @@ function CampaignModal({
           placeholder="e.g. Ramadan Combo Offer"
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Channel">
           <Select
             value={form.channel}
@@ -481,7 +481,7 @@ function AddCustomerModal({
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Phone">
           <Input
             value={form.phone ?? ""}
@@ -496,7 +496,7 @@ function AddCustomerModal({
           />
         </Field>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Tier">
           <Select
             value={form.tier}

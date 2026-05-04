@@ -15,7 +15,7 @@ export function WeekBars({
   data: { d: string; dinein: number; delivery: number; takeaway: number }[];
 }) {
   return (
-    <div className="h-64 w-full">
+    <div className="h-56 w-full sm:h-64">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
           <CartesianGrid stroke="#eef0f5" strokeDasharray="3 3" vertical={false} />

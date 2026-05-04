@@ -17,8 +17,8 @@ export function ChannelChart({ data }: { data: Record<string, number> }) {
   const hasAny = entries.some((e) => e.value > 0);
 
   return (
-    <div className="h-56 w-full flex items-center">
-      <div className="flex-1 h-full">
+    <div className="flex w-full flex-col items-stretch gap-2 sm:h-56 sm:flex-row sm:items-center">
+      <div className="h-44 w-full sm:h-full sm:flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -37,14 +37,14 @@ export function ChannelChart({ data }: { data: Record<string, number> }) {
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="space-y-2 pr-2">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 px-1 pb-1 sm:block sm:space-y-2 sm:pr-2">
         {entries.map((d) => (
           <div key={d.name} className="flex items-center gap-2 text-sm">
             <span
               className="w-2.5 h-2.5 rounded-sm"
               style={{ background: d.color }}
             />
-            <span className="text-ink-700 w-20">{d.name}</span>
+            <span className="text-ink-700 w-16 sm:w-20">{d.name}</span>
             <span className="font-semibold text-ink-900 tabular-nums">
               {d.value}%
             </span>

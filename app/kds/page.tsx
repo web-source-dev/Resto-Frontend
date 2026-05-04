@@ -10,6 +10,8 @@ import {
   Volume2,
   VolumeX,
   BookOpen,
+  FileText,
+  Package,
 } from "lucide-react";
 import clsx from "clsx";
 import { useApi } from "@/lib/useApi";
@@ -18,10 +20,16 @@ import { useSocketEvent } from "@/lib/SocketProvider";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toaster";
 import { Modal } from "@/components/Modal";
+import { OrderDetailModal } from "@/components/OrderDetailModal";
 
 const stationList = ["All", "Grill", "Fryer", "Cold", "Drinks", "Oven"];
 
 const AUDIO_KEY = "ff_kds_audio";
+
+/** API JSON uses `id` (global mongoose transform strips nested `_id`). */
+function lineItemKey(it: any) {
+  return it?.id ?? it?._id ?? "";
+}
 
 function beep() {
   try {
@@ -44,13 +52,17 @@ function TicketCard({
   o,
   onAction,
   onRecipes,
+  onViewDetails,
   onAdjustEta,
+  onAdjustItemEta,
   tick,
 }: {
   o: any;
   onAction: (id: string, to: string, etaMinutes?: number) => void;
   onRecipes: (o: any) => void;
+  onViewDetails: (o: any) => void;
   onAdjustEta: (id: string, addMinutes: number) => void;
+  onAdjustItemEta: (orderId: string, itemId: string, addMinutes: number) => void;
   tick: number;
 }) {
   const [picking, setPicking] = useState(false);
@@ -87,8 +99,23 @@ function TicketCard({
     hour: "2-digit",
     minute: "2-digit",
   });
+  const ageMin = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(o.placedAt).getTime()) / 60000)
+  );
+  const isFresh = ageMin <= 2;
+  const isRecent = ageMin <= 5;
   return (
-    <div className="card overflow-hidden flex flex-col">
+    <div
+      className={clsx(
+        "card overflow-hidden flex flex-col border",
+        isFresh
+          ? "border-emerald-300 ring-2 ring-emerald-100"
+          : isRecent
+          ? "border-sky-200"
+          : "border-ink-200/70"
+      )}
+    >
       <div
         className={clsx(
           "px-4 py-2.5 flex items-center justify-between text-white",
@@ -103,6 +130,16 @@ function TicketCard({
           )}
         </div>
         <div className="flex items-center gap-1.5 text-xs">
+          {isFresh && (
+            <span className="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">
+              Just in
+            </span>
+          )}
+          {!isFresh && isRecent && (
+            <span className="rounded bg-white/25 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+              New
+            </span>
+          )}
           <span className="flex items-center gap-1 bg-white/20 px-1.5 py-0.5 rounded">
             <Clock className="w-3 h-3" />
             {elapsed}m
@@ -126,23 +163,33 @@ function TicketCard({
           )}
         </div>
       </div>
-      <div className="px-4 py-3 border-b border-ink-100 flex items-center justify-between text-[11px]">
-        <span className="text-ink-500">
+      <div className="px-4 py-3 border-b border-ink-100 flex items-center justify-between gap-2 text-[11px]">
+        <span className="text-ink-500 min-w-0">
           Opened {opened}
           {o.items?.[0]?.station ? ` · ${o.items[0].station}` : ""}
         </span>
-        <button
-          onClick={() => onRecipes(o)}
-          className="text-xs font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"
-        >
-          <BookOpen className="w-3 h-3" /> Recipes
-        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onViewDetails(o)}
+            className="text-xs font-medium text-ink-700 hover:text-ink-900 flex items-center gap-1"
+          >
+            <FileText className="w-3 h-3" /> Details
+          </button>
+          <button
+            type="button"
+            onClick={() => onRecipes(o)}
+            className="text-xs font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"
+          >
+            <BookOpen className="w-3 h-3" /> Recipes
+          </button>
+        </div>
       </div>
       <div className="p-4 flex-1 space-y-2.5">
         {o.items
           ?.filter((it: any) => it.status !== "Pending")
           .map((it: any, i: number) => (
-            <div key={i} className="flex items-start gap-2">
+            <div key={lineItemKey(it) || i} className="flex items-start gap-2">
               <span className="w-6 h-6 text-xs font-bold text-ink-900 bg-ink-100 rounded flex items-center justify-center shrink-0">
                 {it.qty}
               </span>
@@ -151,6 +198,16 @@ function TicketCard({
                   <p className="text-sm font-semibold text-ink-900 leading-tight">
                     {it.name}
                   </p>
+                  {it.eta && (
+                    <span className="text-[10px] font-semibold bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded">
+                      ETA{" "}
+                      {Math.max(
+                        0,
+                        Math.ceil((new Date(it.eta).getTime() - Date.now()) / 60000)
+                      )}
+                      m
+                    </span>
+                  )}
                   {it.addendum && (
                     <span className="text-[9px] font-extrabold bg-sky-500 text-white px-1.5 py-0.5 rounded tracking-wider animate-pulseDot">
                       NEW
@@ -164,6 +221,50 @@ function TicketCard({
                 )}
                 {it.note && (
                   <p className="text-xs text-amber-700 italic mt-0.5">⚡ {it.note}</p>
+                )}
+                {it.status !== "Ready" && (
+                  <div className="mt-1 flex flex-wrap items-center gap-1">
+                    {!it.eta && (
+                      <>
+                        <button
+                          onClick={() =>
+                            onAdjustItemEta(o.id, String(lineItemKey(it)), 5)
+                          }
+                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
+                        >
+                          Set 5m
+                        </button>
+                        <button
+                          onClick={() =>
+                            onAdjustItemEta(o.id, String(lineItemKey(it)), 10)
+                          }
+                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
+                        >
+                          Set 10m
+                        </button>
+                      </>
+                    )}
+                    {it.eta && (
+                      <>
+                        <button
+                          onClick={() =>
+                            onAdjustItemEta(o.id, String(lineItemKey(it)), 2)
+                          }
+                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
+                        >
+                          +2m
+                        </button>
+                        <button
+                          onClick={() =>
+                            onAdjustItemEta(o.id, String(lineItemKey(it)), 5)
+                          }
+                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
+                        >
+                          +5m
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -183,7 +284,7 @@ function TicketCard({
               <p className="text-[11px] text-ink-500 font-semibold uppercase tracking-wider">
                 How long to prep?
               </p>
-              <div className="grid grid-cols-5 gap-1.5">
+              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
                 {[5, 10, 15, 20, 30].map((m) => (
                   <button
                     key={m}
@@ -228,12 +329,21 @@ function TicketCard({
             </>
           )
         ) : o.status === "Ready" ? (
-          <button
-            onClick={() => onAction(o.id, "Served")}
-            className="flex-1 btn bg-emerald-500 text-white hover:bg-emerald-600"
-          >
-            <CheckCircle2 className="w-4 h-4" /> Bump · Served
-          </button>
+          o.channel === "Delivery" ? (
+            <div className="w-full rounded-lg border border-sky-200 bg-sky-50 px-3 py-2.5 text-center text-[11px] leading-snug text-sky-950">
+              <Package className="w-4 h-4 inline-block align-text-bottom text-sky-600 mr-1" />
+              <strong>Delivery</strong> — leave on{" "}
+              <strong className="text-sky-900">Ready</strong>. Dispatch assigns a rider;
+              the rider marks pickup on the Delivery page.
+            </div>
+          ) : (
+            <button
+              onClick={() => onAction(o.id, "Served")}
+              className="flex-1 btn bg-emerald-500 text-white hover:bg-emerald-600"
+            >
+              <CheckCircle2 className="w-4 h-4" /> Bump · Served
+            </button>
+          )
         ) : (
           <div className="flex items-center gap-1.5 w-full">
             <button
@@ -271,6 +381,7 @@ export default function KdsPage() {
   const [audio, setAudio] = useState(false);
   const [eightySixOpen, setEightySixOpen] = useState(false);
   const [recipesOpen, setRecipesOpen] = useState<any | null>(null);
+  const [detailOrder, setDetailOrder] = useState<any | null>(null);
   const [tick, setTick] = useState(0);
   const toast = useToast();
 
@@ -311,6 +422,16 @@ export default function KdsPage() {
     try {
       await api.post(`/api/orders/${id}/eta`, { addMinutes });
       toast(`ETA extended +${addMinutes}m`, "success");
+      refresh();
+    } catch (e: any) {
+      toast(e.message, "error");
+    }
+  }
+
+  async function extendItemEta(orderId: string, itemId: string, addMinutes: number) {
+    try {
+      await api.post(`/api/orders/${orderId}/items/${itemId}/eta`, { addMinutes });
+      toast(`Item ETA +${addMinutes}m`, "success");
       refresh();
     } catch (e: any) {
       toast(e.message, "error");
@@ -375,14 +496,14 @@ export default function KdsPage() {
         }
       />
 
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <div className="flex gap-1 p-1 bg-white rounded-lg border border-ink-200">
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-lg border border-ink-200 bg-white p-1 md:w-auto">
           {stationList.map((s) => (
             <button
               key={s}
               onClick={() => setStation(s)}
               className={clsx(
-                "px-3 py-1.5 text-sm font-medium rounded-md",
+                "whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium",
                 station === s
                   ? "bg-ink-900 text-white"
                   : "text-ink-600 hover:bg-ink-100"
@@ -393,7 +514,7 @@ export default function KdsPage() {
           ))}
         </div>
         <div className="flex-1" />
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex flex-wrap items-center gap-3 text-xs">
           <Legend color="bg-ink-500" label="Queued" />
           <Legend color="bg-sky-500" label="In Progress" />
           <Legend color="bg-emerald-500" label="Ready" />
@@ -410,7 +531,9 @@ export default function KdsPage() {
             tick={tick}
             onAction={action}
             onAdjustEta={extendEta}
+            onAdjustItemEta={extendItemEta}
             onRecipes={setRecipesOpen}
+            onViewDetails={setDetailOrder}
           />
         ))}
         {visible.length === 0 && (
@@ -427,6 +550,11 @@ export default function KdsPage() {
       <RecipesModal
         item={recipesOpen}
         onClose={() => setRecipesOpen(null)}
+      />
+      <OrderDetailModal
+        open={!!detailOrder}
+        order={detailOrder}
+        onClose={() => setDetailOrder(null)}
       />
     </>
   );

@@ -36,6 +36,9 @@ export function NewOrderModal({
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [matchedCustomer, setMatchedCustomer] = useState<any | null>(null);
+  const [suggestions, setSuggestions] = useState<
+    { name: string; phone: string; email: string }[]
+  >([]);
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryNote, setDeliveryNote] = useState("");
   const [cashOnDelivery, setCashOnDelivery] = useState(true);
@@ -75,6 +78,32 @@ export function NewOrderModal({
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerPhone]);
+
+  useEffect(() => {
+    const source =
+      customerPhone.trim().length >= 2
+        ? { q: customerPhone.trim(), field: "phone" }
+        : customerName.trim().length >= 2
+        ? { q: customerName.trim(), field: "name" }
+        : customerEmail.trim().length >= 2
+        ? { q: customerEmail.trim(), field: "email" }
+        : null;
+    if (!source) {
+      setSuggestions([]);
+      return;
+    }
+    const t = setTimeout(async () => {
+      try {
+        const r = await api.get<{ suggestions: { name: string; phone: string; email: string }[] }>(
+          `/api/customers/suggest?q=${encodeURIComponent(source.q)}&field=${source.field}`
+        );
+        setSuggestions(r.suggestions ?? []);
+      } catch {
+        setSuggestions([]);
+      }
+    }, 220);
+    return () => clearTimeout(t);
+  }, [customerName, customerPhone, customerEmail]);
   const [tables, setTables] = useState<{ id: string; code: string; status: string }[]>([]);
 
   useEffect(() => {
@@ -288,7 +317,7 @@ export function NewOrderModal({
         </div>
 
         <div className="flex flex-col">
-          <div className="grid grid-cols-2 gap-2 mb-3">
+          <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label="Channel">
               <Select value={channel} onChange={(e) => setChannel(e.target.value)}>
                 <option>Dine-in</option>
@@ -320,6 +349,7 @@ export function NewOrderModal({
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   placeholder="+92 300 0000000"
+                  list="customer-phone-suggestions"
                 />
               </Field>
               {matchedCustomer && (
@@ -343,6 +373,7 @@ export function NewOrderModal({
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="e.g. Ayesha Khan"
+                  list="customer-name-suggestions"
                 />
               </Field>
               <Field label="Email (for digital receipt)">
@@ -351,8 +382,30 @@ export function NewOrderModal({
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   placeholder="ayesha@example.com"
+                  list="customer-email-suggestions"
                 />
               </Field>
+              <datalist id="customer-name-suggestions">
+                {suggestions
+                  .filter((s) => s.name)
+                  .map((s, i) => (
+                    <option key={`n-${i}`} value={s.name} />
+                  ))}
+              </datalist>
+              <datalist id="customer-phone-suggestions">
+                {suggestions
+                  .filter((s) => s.phone)
+                  .map((s, i) => (
+                    <option key={`p-${i}`} value={s.phone} />
+                  ))}
+              </datalist>
+              <datalist id="customer-email-suggestions">
+                {suggestions
+                  .filter((s) => s.email)
+                  .map((s, i) => (
+                    <option key={`e-${i}`} value={s.email} />
+                  ))}
+              </datalist>
               {channel === "Delivery" && (
                 <>
                   <Field label="Delivery address">

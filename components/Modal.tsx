@@ -30,11 +30,11 @@ export function Modal({
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-ink-900/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-ink-900/40 p-2 backdrop-blur-sm sm:items-center sm:p-4">
       <div
-        className={`bg-white rounded-2xl shadow-pop border border-ink-200/70 w-full ${width} max-h-[90vh] flex flex-col`}
+        className={`flex max-h-[92vh] w-full flex-col rounded-2xl border border-ink-200/70 bg-white shadow-pop sm:max-h-[90vh] ${width}`}
       >
-        <div className="flex items-start justify-between p-5 border-b border-ink-100">
+        <div className="flex items-start justify-between border-b border-ink-100 p-4 sm:p-5">
           <div>
             <h3 className="text-lg font-semibold text-ink-900">{title}</h3>
             {subtitle && <p className="text-xs text-ink-500 mt-0.5">{subtitle}</p>}
@@ -46,9 +46,9 @@ export function Modal({
             <X className="w-4 h-4 text-ink-500" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-5">{children}</div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5">{children}</div>
         {footer && (
-          <div className="px-5 py-3 border-t border-ink-100 bg-ink-50/40 flex items-center justify-end gap-2 rounded-b-2xl">
+          <div className="flex flex-col-reverse gap-2 rounded-b-2xl border-t border-ink-100 bg-ink-50/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-end sm:px-5">
             {footer}
           </div>
         )}

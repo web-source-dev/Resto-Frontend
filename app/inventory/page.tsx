@@ -112,7 +112,7 @@ export default function InventoryPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card p-5">
           <p className="kpi-label">Inventory value</p>
           <p className="kpi-value mt-1.5">
@@ -145,7 +145,7 @@ export default function InventoryPage() {
             title="Stock levels"
             subtitle="Auto-deducted per sold order via recipe BOM"
             right={
-              <div className="flex gap-1 text-xs">
+              <div className="flex flex-wrap gap-1 text-xs">
                 {["All", "Low", "Out", "Expiring"].map((f) => (
                   <button
                     key={f}
@@ -417,7 +417,7 @@ function AdjustModal({
           onChange={(e) => setDelta(Number(e.target.value))}
         />
       </Field>
-      <div className="flex gap-2 mt-2">
+      <div className="mt-2 flex flex-wrap gap-2">
         {[-1, -0.5, 0.5, 1, 5].map((n) => (
           <button
             key={n}
@@ -491,7 +491,7 @@ function IngredientModal({
         </>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="SKU">
           <Input
             value={form.sku ?? ""}
@@ -511,7 +511,7 @@ function IngredientModal({
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
       </Field>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Field label="Unit">
           <Select
             value={form.unit}

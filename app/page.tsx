@@ -121,7 +121,7 @@ export default function Home() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi
           label="Revenue today"
           value={k ? `Rs ${k.revenueToday.toLocaleString()}` : "—"}
@@ -158,7 +158,7 @@ export default function Home() {
             title="Revenue · Today"
             subtitle="Hourly sales, PKR"
             right={
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-brand-500" />
                   Today
@@ -170,7 +170,7 @@ export default function Home() {
             }
           >
             <RevenueChart data={data?.hourly ?? []} />
-            <div className="grid grid-cols-3 divide-x divide-ink-100 border-t border-ink-100 mt-2 -mx-5 -mb-5">
+            <div className="mt-2 -mx-5 -mb-5 grid grid-cols-1 divide-y divide-ink-100 border-t border-ink-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               <Stat
                 label="Peak hour"
                 value={(() => {
@@ -387,7 +387,7 @@ export default function Home() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi
           label="Active tables"
           value={k?.activeTables ?? "—"}

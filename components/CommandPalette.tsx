@@ -80,8 +80,8 @@ export function CommandPalette() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 p-4 pt-[15vh] bg-ink-900/40 backdrop-blur-sm">
-      <div className="max-w-xl mx-auto bg-white rounded-xl shadow-pop border border-ink-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-ink-900/40 p-3 pt-[10vh] backdrop-blur-sm sm:p-4 sm:pt-[15vh]">
+      <div className="mx-auto max-w-xl overflow-hidden rounded-xl border border-ink-200 bg-white shadow-pop">
         <div className="flex items-center gap-3 px-4 py-3 border-b border-ink-100">
           <Search className="w-4 h-4 text-ink-400" />
           <input
@@ -133,7 +133,7 @@ export function CommandPalette() {
                 i === cursor ? "bg-brand-50" : ""
               }`}
             >
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-500 w-20">
+              <span className="w-14 text-[10px] font-semibold uppercase tracking-wider text-ink-500 sm:w-20">
                 {r.type}
               </span>
               <div className="flex-1 min-w-0">

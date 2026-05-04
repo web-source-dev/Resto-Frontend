@@ -230,7 +230,7 @@ export default function ExpensesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi
           label="Total cost today"
           value={`Rs ${todayTotal.toLocaleString()}`}
@@ -263,11 +263,11 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-white border border-ink-200 mb-4">
+      <div className="mb-4 inline-flex w-full flex-wrap items-center gap-1 rounded-lg border border-ink-200 bg-white p-1 sm:w-auto">
         <button
           onClick={() => setTab("expenses")}
           className={clsx(
-            "px-4 py-1.5 rounded-md text-sm font-semibold",
+            "flex-1 px-4 py-1.5 rounded-md text-sm font-semibold sm:flex-none",
             tab === "expenses"
               ? "bg-ink-900 text-white"
               : "text-ink-600 hover:bg-ink-100"
@@ -279,7 +279,7 @@ export default function ExpensesPage() {
         <button
           onClick={() => setTab("wastage")}
           className={clsx(
-            "px-4 py-1.5 rounded-md text-sm font-semibold",
+            "flex-1 px-4 py-1.5 rounded-md text-sm font-semibold sm:flex-none",
             tab === "wastage"
               ? "bg-ink-900 text-white"
               : "text-ink-600 hover:bg-ink-100"
@@ -652,7 +652,7 @@ function LogExpenseModal({
         </>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Category">
           <Select
             value={form.category}
@@ -684,7 +684,7 @@ function LogExpenseModal({
           onChange={(e) => setForm({ ...form, subcategory: e.target.value })}
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Vendor / paid to">
           <Input
             value={form.vendor ?? ""}
@@ -821,7 +821,7 @@ function LogWastageModal({
           ))}
         </Select>
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Quantity">
           <Input
             type="number"

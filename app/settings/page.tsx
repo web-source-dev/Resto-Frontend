@@ -540,7 +540,7 @@ function OutletEditor({
           disabled={!canWrite}
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Phone">
           <Input
             value={form.phone ?? ""}
@@ -557,7 +557,7 @@ function OutletEditor({
           />
         </Field>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Tax ID / NTN">
           <Input
             value={form.taxId ?? ""}
@@ -637,7 +637,7 @@ function TaxEditor({
         )
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Tax rate (%)">
           <Input
             type="number"
@@ -762,7 +762,7 @@ function LocalizationEditor({
           ))}
         </Select>
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Currency">
           <Select
             value={form.currency ?? "PKR"}
@@ -1420,7 +1420,7 @@ function PrinterEditor({
           ))}
         </Select>
       </Field>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Field label="Host / IP">
           <Input
             className="col-span-2"
@@ -1678,7 +1678,7 @@ function TemplateEditor({
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Channel">
           <Select
             value={form.channel}
@@ -2123,7 +2123,7 @@ function ReceiptEditor({
         <p className="text-xs font-semibold uppercase tracking-wide text-ink-500 mb-2">
           QR page branding
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Brand color">
             <Input
               type="color"
@@ -2498,7 +2498,7 @@ function WebhookEditor({
       </Field>
       <div>
         <p className="text-xs font-semibold text-ink-700 mb-1.5">Events</p>
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
           {events.map((ev) => (
             <label
               key={ev}
@@ -2640,7 +2640,7 @@ function ApiKeysPanel({
             />
           </Field>
           <p className="text-xs font-semibold text-ink-700 mt-2 mb-1.5">Scopes</p>
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
             {scopes.map((s) => (
               <label
                 key={s}
@@ -2822,7 +2822,7 @@ function BackupPanel({
 
       <div className="mb-4 p-3 rounded-lg border border-ink-200">
         <p className="text-sm font-semibold mb-2">Data retention</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Order history (days)">
             <Input
               type="number"

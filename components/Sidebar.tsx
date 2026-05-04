@@ -24,9 +24,9 @@ import clsx from "clsx";
 import { useAuth } from "@/lib/AuthProvider";
 import { canAccess, Role } from "@/lib/roles";
 
-type NavItem = { href: string; label: string; icon: any };
+export type NavItem = { href: string; label: string; icon: any };
 
-const all: {
+export const NAV_SECTIONS: {
   title: string;
   items: NavItem[];
 }[] = [
@@ -111,7 +111,7 @@ export function Sidebar() {
   const pathname = usePathname() ?? "/";
   const { user } = useAuth();
   return (
-    <aside className="w-64 shrink-0 border-r border-ink-200/70 bg-white hidden lg:flex flex-col sticky top-0 h-screen">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 shrink-0 flex-col border-r border-ink-200/70 bg-white lg:flex">
       <div className="h-16 px-5 flex items-center gap-2.5 border-b border-ink-200/70">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-sm">
           <Flame className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -127,7 +127,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto pt-2 pb-6">
-        {all.map((sec) => (
+        {NAV_SECTIONS.map((sec) => (
           <Section
             key={sec.title}
             title={sec.title}
@@ -137,23 +137,6 @@ export function Sidebar() {
           />
         ))}
       </nav>
-
-      {(user?.role === "admin" || user?.role === "manager") && (
-        <div className="p-3">
-          <div className="rounded-xl bg-gradient-to-br from-ink-900 to-ink-800 text-white p-4 relative overflow-hidden">
-            <Sparkles className="w-4 h-4 text-brand-300 mb-2" />
-            <div className="font-semibold text-sm leading-snug">
-              Enable AI demand forecasting
-            </div>
-            <p className="text-[12px] text-ink-300 mt-1 leading-snug">
-              Predict tomorrow&apos;s rush, reorder stock automatically.
-            </p>
-            <button className="mt-3 w-full text-xs font-medium bg-white text-ink-900 rounded-md py-1.5 hover:bg-ink-100 transition-colors">
-              Try Phase 3 preview
-            </button>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }

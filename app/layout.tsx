@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
+import { PwaBootstrap } from "@/components/PwaBootstrap";
 import { AuthProvider } from "@/lib/AuthProvider";
 import { SocketProvider } from "@/lib/SocketProvider";
 import { ToastProvider } from "@/components/Toaster";
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
   title: "FlavorFlow RMS — Admin Console",
   description:
     "FlavorFlow Restaurant Management System — one operating system for orders, kitchen, inventory, staff, and revenue.",
+  manifest: "/manifest.webmanifest",
+  themeColor: "#f97316",
 };
 
 export default function RootLayout({
@@ -30,10 +33,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className="antialiased">
         <AuthProvider>
           <SocketProvider>
             <ToastProvider>
+              <PwaBootstrap />
               <AppShell>{children}</AppShell>
             </ToastProvider>
           </SocketProvider>

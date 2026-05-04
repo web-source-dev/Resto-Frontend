@@ -10,13 +10,15 @@ import {
   Users,
   Bell,
   X as XIcon,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import clsx from "clsx";
 import { useApi } from "@/lib/useApi";
 import { useCallback, useEffect, useState } from "react";
 import { useSocketEvent } from "@/lib/SocketProvider";
 import { api } from "@/lib/api";
-import { Modal, Field, Input, Select, Textarea } from "@/components/Modal";
+import { Modal, Field, Input, Select } from "@/components/Modal";
 import { useToast } from "@/components/Toaster";
 import { generateTableQRs } from "@/lib/export";
 
@@ -114,6 +116,8 @@ export default function TablesPage() {
   const [seatFrom, setSeatFrom] = useState<any>(null);
   const [selected, setSelected] = useState<any>(null);
   const [resOpen, setResOpen] = useState(false);
+  const [manageOpen, setManageOpen] = useState(false);
+  const [editingTable, setEditingTable] = useState<any | null>(null);
   const toast = useToast();
 
   const onEvt = useCallback(() => {
@@ -180,6 +184,34 @@ export default function TablesPage() {
     }
   }
 
+  function openCreateTable() {
+    setEditingTable(null);
+    setManageOpen(true);
+  }
+
+  function openEditTable(t: any) {
+    setEditingTable(t);
+    setManageOpen(true);
+  }
+
+  async function removeTable(t: any) {
+    if (
+      !confirm(
+        `Remove ${t.code}? This cannot be undone and only Free tables can be removed.`
+      )
+    ) {
+      return;
+    }
+    try {
+      await api.del(`/api/tables/${t.id}`);
+      toast(`${t.code} removed`, "success");
+      setSelected(null);
+      refresh();
+    } catch (e: any) {
+      toast(e.message, "error");
+    }
+  }
+
   const zones = ["Indoor", "Outdoor", "VIP"].map((z: string) => {
     const zt = tables.filter((t: any) => t.zone === z);
     const zOcc = zt.filter((t: any) => t.status === "Occupied").length;
@@ -219,6 +251,9 @@ export default function TablesPage() {
             >
               <Layers className="w-4 h-4" /> Floor plan editor
             </button>
+            <button className="btn-outline" onClick={openCreateTable}>
+              <Plus className="w-4 h-4" /> Add table
+            </button>
             <button className="btn-primary" onClick={() => setResOpen(true)}>
               <Plus className="w-4 h-4" /> New reservation
             </button>
@@ -226,7 +261,7 @@ export default function TablesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
         <div className="card p-4">
           <p className="kpi-label">Occupancy</p>
           <p className="text-2xl font-semibold mt-1">
@@ -261,7 +296,7 @@ export default function TablesPage() {
             title="Live floor"
             subtitle="Tap a table for details · tap ✓ Free to clear"
             right={
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
                 <button
                   onClick={freeAllNonFree}
                   className="btn-ghost text-xs text-emerald-700 hover:text-emerald-800"
@@ -278,7 +313,7 @@ export default function TablesPage() {
               </div>
             }
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {tables.map((t: any) => (
                 <TableCard
                   key={t.id}
@@ -314,7 +349,7 @@ export default function TablesPage() {
               (waitData!.items ?? []).map((w: any) => (
                 <div
                   key={w.id}
-                  className="px-4 py-2.5 flex items-center gap-2"
+                className="px-4 py-2.5 flex flex-col items-start gap-2 sm:flex-row sm:items-center"
                 >
                   <div className="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
                     <Users className="w-4 h-4" />
@@ -460,7 +495,7 @@ export default function TablesPage() {
         )}
 
         <p className="text-sm text-ink-600 mb-3">Or set a specific status</p>
-        <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {statuses
             .filter((s) => s !== "Free")
             .map((s) => (
@@ -475,6 +510,23 @@ export default function TablesPage() {
         </div>
         {selected && (
           <div className="border-t border-ink-100 pt-4">
+            <p className="text-[11px] uppercase tracking-wider text-ink-500 font-semibold mb-2">
+              Manage table
+            </p>
+            <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button
+                className="btn-outline justify-start"
+                onClick={() => openEditTable(selected)}
+              >
+                <Pencil className="h-4 w-4" /> Edit details
+              </button>
+              <button
+                className="btn-outline justify-start text-rose-700 hover:text-rose-800"
+                onClick={() => removeTable(selected)}
+              >
+                <Trash2 className="h-4 w-4" /> Remove table
+              </button>
+            </div>
             <p className="text-[11px] uppercase tracking-wider text-ink-500 font-semibold mb-2">
               Customer QR link
             </p>
@@ -500,6 +552,20 @@ export default function TablesPage() {
         }}
       />
 
+      <ManageTableModal
+        open={manageOpen}
+        table={editingTable}
+        onClose={() => {
+          setManageOpen(false);
+          setEditingTable(null);
+        }}
+        onSaved={() => {
+          setManageOpen(false);
+          setEditingTable(null);
+          refresh();
+        }}
+      />
+
       <AddToWaitlistModal
         open={waitAddOpen}
         onClose={() => setWaitAddOpen(false)}
@@ -520,6 +586,136 @@ export default function TablesPage() {
         }}
       />
     </>
+  );
+}
+
+function ManageTableModal({
+  open,
+  table,
+  onClose,
+  onSaved,
+}: {
+  open: boolean;
+  table: any | null;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const toast = useToast();
+  const [form, setForm] = useState<any>({
+    code: "",
+    capacity: 4,
+    zone: "Indoor",
+    status: "Free",
+  });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    if (table) {
+      setForm({
+        code: table.code ?? "",
+        capacity: Number(table.capacity ?? 4),
+        zone: table.zone ?? "Indoor",
+        status: table.status ?? "Free",
+      });
+      return;
+    }
+    setForm({ code: "", capacity: 4, zone: "Indoor", status: "Free" });
+  }, [open, table]);
+
+  async function save() {
+    const code = String(form.code ?? "").trim().toUpperCase();
+    if (!code) {
+      toast("Table code is required", "error");
+      return;
+    }
+    if (!form.capacity || Number(form.capacity) < 1) {
+      toast("Capacity must be at least 1", "error");
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        code,
+        capacity: Number(form.capacity),
+        zone: form.zone,
+        status: form.status,
+      };
+      if (table) {
+        await api.patch(`/api/tables/${table.id}`, payload);
+        toast(`${code} updated`, "success");
+      } else {
+        await api.post("/api/tables", payload);
+        toast(`${code} created`, "success");
+      }
+      onSaved();
+    } catch (e: any) {
+      toast(e.message, "error");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={table ? `Edit table ${table.code}` : "Add table"}
+      subtitle="Manage dining table details"
+      width="max-w-md"
+      footer={
+        <>
+          <button className="btn-outline" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn-primary" onClick={save} disabled={saving}>
+            {saving ? "Saving..." : table ? "Save changes" : "Create table"}
+          </button>
+        </>
+      }
+    >
+      <Field label="Table code">
+        <Input
+          value={form.code}
+          onChange={(e) => setForm({ ...form, code: e.target.value })}
+          placeholder="e.g. T12"
+        />
+      </Field>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Field label="Capacity">
+          <Input
+            type="number"
+            min={1}
+            value={form.capacity}
+            onChange={(e) =>
+              setForm({ ...form, capacity: Number(e.target.value) || 0 })
+            }
+          />
+        </Field>
+        <Field label="Zone">
+          <Select
+            value={form.zone}
+            onChange={(e) => setForm({ ...form, zone: e.target.value })}
+          >
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+            <option value="VIP">VIP</option>
+          </Select>
+        </Field>
+      </div>
+      <Field label="Status">
+        <Select
+          value={form.status}
+          onChange={(e) => setForm({ ...form, status: e.target.value })}
+        >
+          {statuses.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </Select>
+      </Field>
+    </Modal>
   );
 }
 
@@ -577,7 +773,7 @@ function AddToWaitlistModal({
           onChange={(e) => setForm({ ...form, customerName: e.target.value })}
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Phone (for SMS)">
           <Input
             value={form.phone ?? ""}
@@ -759,7 +955,7 @@ function NewReservationModal({
       <Field label="Phone">
         <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Party size">
           <Input
             type="number"

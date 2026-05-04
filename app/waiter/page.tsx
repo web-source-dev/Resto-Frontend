@@ -67,7 +67,7 @@ export default function WaiterPage() {
         subtitle="Your tables and assigned orders · live updates"
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card p-5">
           <p className="kpi-label">Tables occupied</p>
           <p className="kpi-value mt-1.5">
@@ -111,7 +111,7 @@ export default function WaiterPage() {
             {ready.map((o: any) => (
               <div
                 key={o.id}
-                className="flex items-center gap-3 p-3 rounded-lg bg-white border border-emerald-200"
+                className="flex flex-col gap-2 rounded-lg border border-emerald-200 bg-white p-3 sm:flex-row sm:items-center sm:gap-3"
               >
                 <Bell className="w-5 h-5 text-emerald-600 animate-pulseDot shrink-0" />
                 <div className="flex-1 min-w-0">
@@ -136,7 +136,7 @@ export default function WaiterPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <Card title="Your tables" subtitle="Tap to update status">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {tables.map((t: any) => {
               const bg: Record<string, string> = {
                 Free: "border-emerald-200 bg-emerald-50/60",

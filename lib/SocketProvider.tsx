@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { io, Socket } from "socket.io-client";
 import { SOCKET_URL } from "./config";
 import { getToken } from "./api";
@@ -45,11 +51,15 @@ export function useSocketEvent<T = any>(
   handler: (payload: T) => void
 ) {
   const socket = useSocket();
+  const handlerRef = useRef(handler);
+  handlerRef.current = handler;
+
   useEffect(() => {
     if (!socket) return;
-    socket.on(event, handler);
+    const wrapped = (payload: T) => handlerRef.current(payload);
+    socket.on(event, wrapped);
     return () => {
-      socket.off(event, handler);
+      socket.off(event, wrapped);
     };
-  }, [socket, event, handler]);
+  }, [socket, event]);
 }

@@ -317,7 +317,7 @@ export default function QROrderPage() {
 
         <div className="relative max-w-2xl mx-auto px-4 -mt-8">
           <div className="card p-5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-bold shrink-0">
                   {order.tableCode ?? "🥡"}
@@ -332,7 +332,7 @@ export default function QROrderPage() {
                 </div>
               </div>
               {!closed ? (
-                <div className="text-right">
+                <div className="text-left sm:text-right">
                   {committedEta !== null ? (
                     <>
                       <p className="text-[10px] uppercase tracking-wider font-semibold text-ink-400">
@@ -352,7 +352,7 @@ export default function QROrderPage() {
                           </span>
                         )}
                       </p>
-                      <p className="text-[11px] text-ink-500 font-medium mt-0.5 flex items-center gap-1 justify-end">
+                        <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium text-ink-500 sm:justify-end">
                         <Clock className="w-3 h-3" /> {elapsedMin}m elapsed
                       </p>
                     </>
@@ -369,7 +369,7 @@ export default function QROrderPage() {
                         </span>
                       </p>
                       {fallbackEta !== null && (
-                        <p className="text-[11px] text-brand-600 font-semibold mt-0.5 flex items-center gap-1 justify-end">
+                        <p className="mt-0.5 flex items-center gap-1 text-[11px] font-semibold text-brand-600 sm:justify-end">
                           <Clock className="w-3 h-3" /> ~{fallbackEta}m (est.)
                         </p>
                       )}
@@ -441,7 +441,7 @@ export default function QROrderPage() {
         {loyalty && <LoyaltyStrip loyalty={loyalty} />}
 
         {order.tableCode && !closed && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <button
               onClick={callWaiter}
               disabled={calling}
@@ -479,10 +479,16 @@ export default function QROrderPage() {
           <div className="px-5 pb-4">
             {order.items?.map((i: any, idx: number) => {
               const isPending = i.status === "Pending";
+              const itemEtaMin = i.eta
+                ? Math.max(
+                    0,
+                    Math.ceil((new Date(i.eta).getTime() - Date.now()) / 60000)
+                  )
+                : null;
               return (
                 <div
                   key={idx}
-                  className={`flex items-center gap-3 py-2 border-b border-ink-100 last:border-b-0 ${
+                  className={`flex items-start gap-3 py-2 border-b border-ink-100 last:border-b-0 ${
                     isPending ? "opacity-80" : ""
                   }`}
                 >
@@ -500,6 +506,11 @@ export default function QROrderPage() {
                       <p className="text-sm font-semibold text-ink-900">
                         {i.qty} × {i.name}
                       </p>
+                      {itemEtaMin !== null && !isPending && (
+                        <span className="text-[10px] font-semibold bg-brand-50 text-brand-700 px-1.5 py-0.5 rounded-full">
+                          ETA {itemEtaMin}m
+                        </span>
+                      )}
                       {isPending && (
                         <span className="text-[10px] font-semibold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">
                           Awaiting confirmation
@@ -522,7 +533,7 @@ export default function QROrderPage() {
                       </p>
                     )}
                   </div>
-                  <p className="text-sm tabular-nums font-bold text-ink-900">
+                  <p className="shrink-0 text-sm tabular-nums font-bold text-ink-900">
                     Rs {(i.price * i.qty).toLocaleString()}
                   </p>
                 </div>

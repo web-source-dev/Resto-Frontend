@@ -94,7 +94,7 @@ export function OutletSwitcher() {
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-4 top-14 w-72 bg-white rounded-xl border border-ink-200/70 shadow-pop z-30"
+          className="absolute right-2 top-14 z-30 w-[min(18rem,calc(100vw-1rem))] rounded-xl border border-ink-200/70 bg-white shadow-pop sm:right-4 sm:w-72"
         >
           <div className="px-4 py-3 border-b border-ink-100">
             <p className="text-[11px] uppercase tracking-wider font-semibold text-ink-500">

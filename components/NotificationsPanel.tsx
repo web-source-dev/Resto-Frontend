@@ -6,6 +6,12 @@ import { useSocketEvent } from "@/lib/SocketProvider";
 import { Bell, AlertTriangle, CheckCircle2, Info, X, ExternalLink } from "lucide-react";
 import clsx from "clsx";
 import Link from "next/link";
+import { useToast } from "./Toaster";
+import {
+  pushSupported,
+  subscribeToPushNotifications,
+  syncPushSubscriptionIfGranted,
+} from "@/lib/pushNotifications";
 
 type N = {
   id: string;
@@ -24,6 +30,9 @@ export function NotificationsPanel() {
   const [unread, setUnread] = useState(0);
   const btnRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+  const toast = useToast();
 
   const load = useCallback(async () => {
     try {
@@ -42,6 +51,7 @@ export function NotificationsPanel() {
   }, [load]);
 
   useSocketEvent("notification:new", () => load());
+  useSocketEvent("data:changed", () => load());
 
   useEffect(() => {
     if (!open) return;
@@ -58,6 +68,38 @@ export function NotificationsPanel() {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, [open]);
+
+  useEffect(() => {
+    if (!pushSupported()) return;
+    navigator.serviceWorker.ready
+      .then((reg) => reg.pushManager.getSubscription())
+      .then((sub) => setPushEnabled(!!sub))
+      .catch(() => {});
+    if (Notification.permission === "granted") {
+      syncPushSubscriptionIfGranted().catch(() => {});
+    }
+  }, []);
+
+  async function enablePush() {
+    if (!pushSupported()) {
+      toast("Push is not supported in this browser", "error");
+      return;
+    }
+    setPushBusy(true);
+    try {
+      const res = await subscribeToPushNotifications();
+      if (!res.ok) {
+        toast(res.error ?? "Failed to enable push notifications", "error");
+        return;
+      }
+      setPushEnabled(true);
+      toast("Push notifications enabled", "success");
+    } catch (e: any) {
+      toast(e.message ?? "Failed to enable push notifications", "error");
+    } finally {
+      setPushBusy(false);
+    }
+  }
 
   async function markAllRead() {
     await api.post("/api/notifications/read", { ids: [] });
@@ -84,7 +126,7 @@ export function NotificationsPanel() {
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-4 top-14 w-96 max-h-[70vh] bg-white rounded-xl border border-ink-200/70 shadow-pop z-30 flex flex-col"
+          className="absolute right-2 top-14 z-30 flex max-h-[70vh] w-[min(24rem,calc(100vw-1rem))] flex-col rounded-xl border border-ink-200/70 bg-white shadow-pop sm:right-4 sm:w-96"
         >
           <div className="px-4 py-3 border-b border-ink-100 flex items-center justify-between">
             <div>
@@ -95,12 +137,23 @@ export function NotificationsPanel() {
                   : "You're all caught up"}
               </p>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="text-ink-400 hover:text-ink-700"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              {!pushEnabled && (
+                <button
+                  onClick={enablePush}
+                  disabled={pushBusy}
+                  className="rounded-md bg-brand-50 px-2 py-1 text-[11px] font-semibold text-brand-700 hover:bg-brand-100 disabled:opacity-60"
+                >
+                  {pushBusy ? "Enabling..." : "Enable push"}
+                </button>
+              )}
+              <button
+                onClick={() => setOpen(false)}
+                className="text-ink-400 hover:text-ink-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto">
             {items.length === 0 ? (

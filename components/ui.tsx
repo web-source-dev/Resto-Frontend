@@ -23,7 +23,11 @@ export function PageHeader({
         </h1>
         {subtitle && <p className="text-sm text-ink-500 mt-1">{subtitle}</p>}
       </div>
-      {right && <div className="flex items-center gap-2">{right}</div>}
+      {right && (
+        <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
+          {right}
+        </div>
+      )}
     </div>
   );
 }
@@ -176,7 +180,7 @@ export function Card({
   return (
     <div className={clsx("card", className)}>
       {(title || right) && (
-        <div className="flex items-center justify-between px-5 pt-5 pb-3">
+        <div className="flex flex-col gap-2 px-4 pb-3 pt-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:pt-5">
           <div>
             {title && <div className="section-title">{title}</div>}
             {subtitle && <div className="text-xs text-ink-500 mt-0.5">{subtitle}</div>}

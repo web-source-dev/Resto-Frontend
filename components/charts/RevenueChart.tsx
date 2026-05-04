@@ -15,7 +15,7 @@ export function RevenueChart({
   data: { t: string; rev: number; ord: number }[];
 }) {
   return (
-    <div className="h-72 w-full">
+    <div className="h-64 w-full sm:h-72">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 10, right: 12, left: -10, bottom: 0 }}>
           <defs>

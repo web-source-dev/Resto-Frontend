@@ -21,7 +21,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <Ctx.Provider value={push}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 space-y-2 w-80">
+      <div className="fixed bottom-3 left-3 right-3 z-50 space-y-2 sm:bottom-4 sm:left-auto sm:right-4 sm:w-80">
         {toasts.map((t) => (
           <div
             key={t.id}

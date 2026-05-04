@@ -15,7 +15,7 @@ export function ReportTrend({
   data: { d: string; rev: number; prev: number }[];
 }) {
   return (
-    <div className="h-72 w-full">
+    <div className="h-64 w-full sm:h-72">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 10, right: 12, left: -10, bottom: 0 }}>
           <CartesianGrid stroke="#eef0f5" strokeDasharray="3 3" vertical={false} />

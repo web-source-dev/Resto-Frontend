@@ -281,14 +281,14 @@ export default function MenuPage() {
             title={activeCategoryName ?? "Menu"}
             subtitle={`${filtered.length} items · tap a row to view recipe`}
             right={
-              <div className="flex items-center gap-2">
-                <div className="relative">
+              <div className="flex w-full items-center gap-2 sm:w-auto">
+                <div className="relative w-full sm:w-auto">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
                   <input
                     placeholder="Search items"
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    className="h-9 pl-9 pr-3 rounded-lg bg-ink-50 border border-ink-200/60 focus:bg-white focus:outline-none text-sm w-56"
+                    className="h-9 w-full rounded-lg border border-ink-200/60 bg-ink-50 pl-9 pr-3 text-sm focus:bg-white focus:outline-none sm:w-56"
                   />
                 </div>
               </div>
@@ -647,12 +647,16 @@ function ItemModal({
   onSaved: () => void;
 }) {
   const toast = useToast();
+  const [localCats, setLocalCats] = useState<any[]>([]);
   const [form, setForm] = useState<any>({});
   const [recipe, setRecipe] = useState<RecipeLine[]>([]);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!open) return;
+    setLocalCats(cats);
     setForm(
       item
         ? { ...item }
@@ -661,7 +665,7 @@ function ItemModal({
             price: 0,
             plateCost: 0,
             station: "Grill",
-            categoryId: cats[0]?.id,
+            categoryId: cats[0]?.id ?? "",
             active: true,
             tags: [],
           }
@@ -675,11 +679,41 @@ function ItemModal({
         qty: r.qty,
       })) ?? []
     );
+    setNewCategoryName("");
   }, [item, cats, open]);
+
+  async function createCategory() {
+    const name = newCategoryName.trim();
+    if (!name) {
+      toast("Enter a category name", "error");
+      return;
+    }
+    setCreatingCategory(true);
+    try {
+      const res = await api.post<{ category: any }>("/api/menu/categories", {
+        name,
+      });
+      const created = res.category;
+      setLocalCats((prev) =>
+        [...prev, created].sort((a, b) => String(a.name).localeCompare(String(b.name)))
+      );
+      setForm((prev: any) => ({ ...prev, categoryId: created.id }));
+      setNewCategoryName("");
+      toast(`Category "${created.name}" created`, "success");
+    } catch (e: any) {
+      toast(e.message, "error");
+    } finally {
+      setCreatingCategory(false);
+    }
+  }
 
   async function save() {
     if (!form.name) {
       toast("Name is required", "error");
+      return;
+    }
+    if (!form.categoryId) {
+      toast("Select or create a category", "error");
       return;
     }
     setSaving(true);
@@ -755,7 +789,8 @@ function ItemModal({
                   setForm({ ...form, categoryId: e.target.value })
                 }
               >
-                {cats.map((c) => (
+                <option value="">Select category</option>
+                {localCats.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
@@ -777,6 +812,23 @@ function ItemModal({
               </Select>
             </Field>
           </div>
+          <Field label="Add category">
+            <div className="flex gap-2">
+              <Input
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="e.g. Burgers"
+              />
+              <button
+                type="button"
+                onClick={createCategory}
+                disabled={creatingCategory}
+                className="btn-outline shrink-0"
+              >
+                {creatingCategory ? "Adding..." : "Add"}
+              </button>
+            </div>
+          </Field>
           <Field label="Tags (comma-separated)">
             <Input
               value={(form.tags ?? []).join(", ")}

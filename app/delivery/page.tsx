@@ -126,7 +126,7 @@ function RiderView() {
       {/* Rider status banner */}
       <div
         className={clsx(
-          "card p-4 mb-6 flex items-center gap-3 border-2",
+          "card mb-6 flex flex-col gap-3 border-2 p-4 sm:flex-row sm:items-center",
           status === "Available" && "border-emerald-200 bg-emerald-50/60",
           status === "On delivery" && "border-sky-200 bg-sky-50/60",
           status === "Picking up" && "border-amber-200 bg-amber-50/60",
@@ -161,7 +161,7 @@ function RiderView() {
             {status === "Off shift" && "Clock in from the Staff page to start"}
           </p>
         </div>
-        <div className="text-right shrink-0">
+        <div className="shrink-0 text-left sm:text-right">
           <p className="kpi-label">Today</p>
           <p className="text-xl font-bold tabular-nums">{completed.length}</p>
           <p className="text-[11px] text-ink-500">deliveries</p>
@@ -202,7 +202,7 @@ function RiderView() {
             {completed.map((o: any) => (
               <div
                 key={o.id}
-                className="flex items-center gap-3 px-5 py-3 hover:bg-ink-50/60"
+                className="flex flex-col gap-2 px-5 py-3 hover:bg-ink-50/60 sm:flex-row sm:items-center sm:gap-3"
               >
                 <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                   <CheckCircle2 className="w-4 h-4" />
@@ -271,7 +271,7 @@ function ActiveDeliveryCard({
     <div className="card overflow-hidden">
       <div
         className={clsx(
-          "px-5 py-3 flex items-center justify-between text-white",
+          "flex flex-col gap-2 px-5 py-3 text-white sm:flex-row sm:items-center sm:justify-between",
           phase === "pickup" ? "bg-amber-500" : "bg-sky-500"
         )}
       >
@@ -285,7 +285,7 @@ function ActiveDeliveryCard({
       </div>
 
       <div className="p-5">
-        <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xl font-bold tracking-tight text-ink-900">
               {order.customerName ?? "Customer"}
@@ -298,7 +298,7 @@ function ActiveDeliveryCard({
               })}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-left sm:text-right">
             <p className="text-[11px] uppercase tracking-wider text-ink-500 font-semibold">
               Bill total
             </p>
@@ -406,7 +406,7 @@ function ActiveDeliveryCard({
       {/* Action footer */}
       <div className="border-t border-ink-100 bg-ink-50/60 p-4">
         {phase === "pickup" ? (
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <button onClick={onFail} className="btn-outline text-rose-600">
               <XCircle className="w-4 h-4" /> Can&apos;t deliver
             </button>
@@ -433,7 +433,7 @@ function ActiveDeliveryCard({
                 </span>
               </label>
             )}
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <button onClick={onFail} className="btn-outline text-rose-600">
                 <XCircle className="w-4 h-4" /> Failed
               </button>
@@ -493,13 +493,13 @@ function EmptyActiveCard({
             {unassigned.map((o: any) => (
               <div
                 key={o.id}
-                className="flex items-center gap-3 px-5 py-3 hover:bg-ink-50/60"
+                className="flex flex-col gap-2 px-5 py-3 hover:bg-ink-50/60 sm:flex-row sm:items-center sm:gap-3"
               >
                 <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                   <Bike className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <p className="font-bold text-ink-900">{o.code}</p>
                     {o.cashOnDelivery && (
                       <span className="chip bg-amber-100 text-amber-800">COD</span>
@@ -658,10 +658,18 @@ function DispatchView() {
   const orders = q?.orders ?? [];
   const riders = rd?.riders ?? [];
 
-  const unassigned = orders.filter(
-    (o) =>
-      o.status === "Ready" && (!o.riderId || o.riderId === null)
-  );
+  const unassigned = orders.filter((o) => {
+    if (o.riderId) return false;
+    if (o.status === "Ready") return true;
+    // Legacy: kitchen bumped "Served" before rider existed — still dispatchable
+    if (
+      o.channel === "Delivery" &&
+      o.status === "Served" &&
+      !o.pickedUpAt
+    )
+      return true;
+    return false;
+  });
   const assigned = orders.filter(
     (o) => o.riderId && ["Ready", "Served"].includes(o.status)
   );
@@ -700,7 +708,7 @@ function DispatchView() {
         subtitle="Assign Ready orders to available riders · track in-flight deliveries"
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card p-5">
           <p className="kpi-label">Ready to dispatch</p>
           <p className="kpi-value mt-1.5 text-amber-700">
@@ -855,6 +863,13 @@ function DispatchRow({
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-bold text-ink-900">{o.code}</p>
             <StatusBadge status={o.status} />
+            {o.channel === "Delivery" &&
+              o.status === "Served" &&
+              !o.pickedUpAt && (
+                <span className="chip bg-amber-50 text-amber-900 border border-amber-200">
+                  Needs rider (was bumped early)
+                </span>
+              )}
             {o.cashOnDelivery && (
               <span className="chip bg-amber-100 text-amber-800">COD</span>
             )}
@@ -892,7 +907,7 @@ function DispatchRow({
           <p className="text-[10px] text-ink-500">{o.items?.length} items</p>
         </div>
       </div>
-      <div className="flex items-center gap-2 mt-3">
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
         <Select
           value={rid}
           onChange={(e) => setRid(e.target.value)}

@@ -123,7 +123,7 @@ export default function StaffPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card p-5">
           <p className="kpi-label">On shift now</p>
           <p className="kpi-value mt-1.5">{onShift}</p>
@@ -148,7 +148,7 @@ export default function StaffPage() {
         </div>
       </div>
 
-      <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-white border border-ink-200 mb-4">
+      <div className="mb-4 inline-flex w-full flex-wrap items-center gap-1 rounded-lg border border-ink-200 bg-white p-1 sm:w-auto">
         {[
           { k: "roster", icon: Users, label: "Today's roster" },
           { k: "schedule", icon: CalendarDays, label: "Weekly schedule" },
@@ -161,7 +161,7 @@ export default function StaffPage() {
               key={t.k}
               onClick={() => setTab(t.k as any)}
               className={clsx(
-                "px-3.5 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1.5",
+                "flex-1 px-3.5 py-1.5 rounded-md text-sm font-semibold flex items-center justify-center gap-1.5 sm:flex-none",
                 tab === t.k
                   ? "bg-ink-900 text-white"
                   : "text-ink-600 hover:bg-ink-100"
@@ -321,7 +321,7 @@ function WeeklySchedule({
       title={`Week of ${dates[0].toLocaleDateString("en-US", { day: "numeric", month: "short" })} — ${dates[6].toLocaleDateString("en-US", { day: "numeric", month: "short" })}`}
       subtitle={`${shifts.length} shifts · ${shifts.filter((s) => s.published).length} published`}
       right={
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1 sm:flex-nowrap">
           <button
             onClick={() => setWeekStart(addDays(weekStart, -7))}
             className="btn-ghost text-xs"
@@ -512,7 +512,7 @@ function AddShiftModal({
           ))}
         </Select>
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Start">
           <Input
             type="time"
@@ -817,7 +817,7 @@ function RequestLeaveModal({
           ))}
         </Select>
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="From">
           <Input
             type="date"
@@ -911,7 +911,7 @@ function AddStaffModal({
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Role">
           <Select
             value={form.role}

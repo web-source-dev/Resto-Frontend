@@ -121,7 +121,7 @@ export function NewPOModal({
         </>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Supplier">
           <Select
             value={supplierId}
@@ -203,7 +203,7 @@ export function NewPOModal({
         ))}
       </div>
 
-      <div className="flex gap-2 mt-3">
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <Select
           value={addingIng}
           onChange={(e) => setAddingIng(e.target.value)}

@@ -131,7 +131,7 @@ export default function PromotionsPage() {
         }
       />
 
-      <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-white border border-ink-200 mb-4">
+      <div className="mb-4 inline-flex w-full flex-wrap items-center gap-1 rounded-lg border border-ink-200 bg-white p-1 sm:w-auto">
         {[
           { k: "coupons", icon: Ticket, label: `Coupons · ${promos?.items?.length ?? 0}` },
           { k: "combos", icon: Package, label: `Combos · ${combos.length}` },
@@ -143,7 +143,7 @@ export default function PromotionsPage() {
               key={t.k}
               onClick={() => setTab(t.k as any)}
               className={clsx(
-                "px-3.5 py-1.5 rounded-md text-sm font-semibold flex items-center gap-1.5",
+                "flex-1 px-3.5 py-1.5 rounded-md text-sm font-semibold flex items-center justify-center gap-1.5 sm:flex-none",
                 tab === t.k
                   ? "bg-ink-900 text-white"
                   : "text-ink-600 hover:bg-ink-100"
@@ -564,7 +564,7 @@ function PromoModal({
         </>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Code">
           <Input
             value={form.code ?? ""}
@@ -583,7 +583,7 @@ function PromoModal({
           />
         </Field>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Type">
           <Select
             value={form.type}
@@ -631,7 +631,7 @@ function PromoModal({
           </Select>
         </Field>
       )}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Customer segment">
           <Select
             value={form.segment ?? "All"}
@@ -654,7 +654,7 @@ function PromoModal({
           />
         </Field>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Field label="Valid from">
           <Input
             type="date"
@@ -783,7 +783,7 @@ function RuleModal({
           placeholder="Weekday happy hour"
         />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Type">
           <Select
             value={form.type}
@@ -828,7 +828,7 @@ function RuleModal({
           })}
         </div>
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Start time">
           <Input
             type="time"
@@ -983,7 +983,7 @@ function ComboModal({
         </>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Combo name">
           <Input
             value={form.name ?? ""}
@@ -1050,7 +1050,7 @@ function ComboModal({
           ))}
       </Select>
 
-      <div className="mt-4 p-3 rounded-lg bg-ink-50 border border-ink-100 flex items-center justify-between">
+      <div className="mt-4 flex flex-col gap-2 rounded-lg border border-ink-100 bg-ink-50 p-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs text-ink-500">Parts total</p>
           <p className="text-sm font-semibold line-through text-ink-400 tabular-nums">

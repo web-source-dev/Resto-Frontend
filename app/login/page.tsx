@@ -48,9 +48,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-ink-50 via-white to-brand-50">
+    <div className="min-h-screen bg-gradient-to-br from-ink-50 via-white to-brand-50 p-4 sm:flex sm:items-center sm:justify-center sm:p-6">
       <div className="w-full max-w-md">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="mb-6 flex items-center gap-3 sm:mb-8">
           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-pop">
             <Flame className="w-6 h-6 text-white" strokeWidth={2.5} />
           </div>
@@ -62,7 +62,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="card p-7">
+        <div className="card p-5 sm:p-7">
           <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
             Welcome back
           </h1>
@@ -113,7 +113,7 @@ export default function LoginPage() {
             <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-500 mb-2">
               Test any role instantly
             </p>
-            <div className="grid grid-cols-3 gap-1.5">
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
               {demos.map((d) => (
                 <button
                   key={d.email}
