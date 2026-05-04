@@ -121,7 +121,14 @@ function ExportBtn({
     <button
       type="button"
       onClick={() =>
-        downloadText(filename, toCSV(rows ?? []), "text/csv")
+        downloadText(filename, toCSV(rows ?? [], [
+          { key: "date", header: "Date" },
+          { key: "revenue", header: "Revenue" },
+          { key: "orders", header: "Orders" },
+          { key: "prev", header: "Prev" },
+          { key: "dineIn", header: "Dine-in" },
+          { key: "takeaway", header: "Takeaway" },
+        ]), "text/csv")
       }
       className="inline-flex items-center gap-1 text-[11px] font-semibold text-ink-500 hover:text-ink-800"
       disabled={!rows?.length}
