@@ -53,7 +53,6 @@ function TicketCard({
   onAction,
   onRecipes,
   onViewDetails,
-  onAdjustEta,
   onAdjustItemEta,
   tick,
 }: {
@@ -61,12 +60,10 @@ function TicketCard({
   onAction: (id: string, to: string, etaMinutes?: number) => void;
   onRecipes: (o: any) => void;
   onViewDetails: (o: any) => void;
-  onAdjustEta: (id: string, addMinutes: number) => void;
   onAdjustItemEta: (orderId: string, itemId: string, addMinutes: number) => void;
   tick: number;
 }) {
-  const [picking, setPicking] = useState(false);
-  const [customEta, setCustomEta] = useState("");
+  const [etaPanelLine, setEtaPanelLine] = useState<string | null>(null);
   const elapsed = o.elapsedMin ?? 0;
 
   // Live ETA countdown — ticks via the parent's interval state so cards refresh
@@ -188,8 +185,11 @@ function TicketCard({
       <div className="p-4 flex-1 space-y-2.5">
         {o.items
           ?.filter((it: any) => it.status !== "Pending")
-          .map((it: any, i: number) => (
-            <div key={lineItemKey(it) || i} className="flex items-start gap-2">
+          .map((it: any, i: number) => {
+            const rawLineId = String(lineItemKey(it) || "");
+            const lineKey = rawLineId || `idx-${i}`;
+            return (
+            <div key={lineKey} className="flex items-start gap-2">
               <span className="w-6 h-6 text-xs font-bold text-ink-900 bg-ink-100 rounded flex items-center justify-center shrink-0">
                 {it.qty}
               </span>
@@ -223,111 +223,49 @@ function TicketCard({
                   <p className="text-xs text-amber-700 italic mt-0.5">⚡ {it.note}</p>
                 )}
                 {it.status !== "Ready" && (
-                  <div className="mt-1 flex flex-wrap items-center gap-1">
-                    {!it.eta && (
-                      <>
-                        <button
-                          onClick={() =>
-                            onAdjustItemEta(o.id, String(lineItemKey(it)), 5)
-                          }
-                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
-                        >
-                          Set 5m
-                        </button>
-                        <button
-                          onClick={() =>
-                            onAdjustItemEta(o.id, String(lineItemKey(it)), 10)
-                          }
-                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
-                        >
-                          Set 10m
-                        </button>
-                      </>
-                    )}
-                    {it.eta && (
-                      <>
-                        <button
-                          onClick={() =>
-                            onAdjustItemEta(o.id, String(lineItemKey(it)), 2)
-                          }
-                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
-                        >
-                          +2m
-                        </button>
-                        <button
-                          onClick={() =>
-                            onAdjustItemEta(o.id, String(lineItemKey(it)), 5)
-                          }
-                          className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
-                        >
-                          +5m
-                        </button>
-                      </>
+                  <div className="mt-1.5 space-y-1.5">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEtaPanelLine((k) => (k === lineKey ? null : lineKey))
+                      }
+                      className="rounded-md border border-ink-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-ink-700 hover:bg-ink-50"
+                    >
+                      {it.eta ? "Adjust ETA" : "Set ETA"}
+                    </button>
+                    {etaPanelLine === lineKey && (
+                      <div className="flex flex-wrap gap-1">
+                        {(it.eta ? [2, 5, 10] : [5, 10, 15, 20, 30]).map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => {
+                              onAdjustItemEta(o.id, rawLineId, m);
+                              setEtaPanelLine(null);
+                            }}
+                            className="rounded-md border border-ink-200 px-1.5 py-0.5 text-[10px] font-semibold text-ink-600 hover:bg-ink-100"
+                          >
+                            {it.eta ? `+${m}m` : `${m}m`}
+                          </button>
+                        ))}
+                      </div>
                     )}
                   </div>
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
       </div>
       <div className="px-4 py-3 border-t border-ink-100 bg-ink-50/40 flex flex-col gap-2">
         {o.status === "Queued" ? (
-          !picking ? (
-            <button
-              onClick={() => setPicking(true)}
-              className="btn-primary w-full"
-            >
-              Accept · Set ETA
-            </button>
-          ) : (
-            <>
-              <p className="text-[11px] text-ink-500 font-semibold uppercase tracking-wider">
-                How long to prep?
-              </p>
-              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
-                {[5, 10, 15, 20, 30].map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => {
-                      onAction(o.id, "In Progress", m);
-                      setPicking(false);
-                    }}
-                    className="btn bg-ink-900 text-white hover:bg-ink-800 text-sm font-bold py-1.5 px-0"
-                  >
-                    {m}m
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="number"
-                  min={1}
-                  max={120}
-                  value={customEta}
-                  onChange={(e) => setCustomEta(e.target.value)}
-                  placeholder="Custom"
-                  className="flex-1 h-9 px-2 rounded-lg border border-ink-200 text-sm focus:border-brand-400 focus:outline-none"
-                />
-                <button
-                  disabled={!customEta || Number(customEta) <= 0}
-                  onClick={() => {
-                    onAction(o.id, "In Progress", Number(customEta));
-                    setPicking(false);
-                    setCustomEta("");
-                  }}
-                  className="btn-primary text-xs disabled:opacity-50"
-                >
-                  Set
-                </button>
-                <button
-                  onClick={() => setPicking(false)}
-                  className="btn-ghost text-xs"
-                >
-                  Cancel
-                </button>
-              </div>
-            </>
-          )
+          <button
+            type="button"
+            onClick={() => onAction(o.id, "In Progress")}
+            className="btn-primary w-full"
+          >
+            Accept
+          </button>
         ) : o.status === "Ready" ? (
           o.channel === "Delivery" ? (
             <div className="w-full rounded-lg border border-sky-200 bg-sky-50 px-3 py-2.5 text-center text-[11px] leading-snug text-sky-950">
@@ -345,28 +283,13 @@ function TicketCard({
             </button>
           )
         ) : (
-          <div className="flex items-center gap-1.5 w-full">
-            <button
-              onClick={() => onAction(o.id, "Ready")}
-              className="flex-1 btn bg-emerald-500 text-white hover:bg-emerald-600"
-            >
-              <CheckCircle2 className="w-4 h-4" /> Mark Ready
-            </button>
-            <button
-              onClick={() => onAdjustEta(o.id, 5)}
-              title="Extend ETA by 5 minutes"
-              className="btn-outline text-xs px-2 py-2"
-            >
-              +5m
-            </button>
-            <button
-              onClick={() => onAdjustEta(o.id, 10)}
-              title="Extend ETA by 10 minutes"
-              className="btn-outline text-xs px-2 py-2"
-            >
-              +10m
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => onAction(o.id, "Ready")}
+            className="w-full btn bg-emerald-500 text-white hover:bg-emerald-600"
+          >
+            <CheckCircle2 className="w-4 h-4" /> Mark Ready
+          </button>
         )}
       </div>
     </div>
@@ -407,8 +330,8 @@ export default function KdsPage() {
   async function action(id: string, to: string, etaMinutes?: number) {
     try {
       await api.post(`/api/orders/${id}/transition`, { to, etaMinutes });
-      if (to === "In Progress" && etaMinutes) {
-        toast(`Accepted · ETA ${etaMinutes} min`, "success");
+      if (to === "In Progress") {
+        toast("Accepted — set ETA per line; ticket ETA is the longest line", "success");
       } else {
         toast(`Order marked ${to}`, "success");
       }
@@ -418,20 +341,10 @@ export default function KdsPage() {
     }
   }
 
-  async function extendEta(id: string, addMinutes: number) {
-    try {
-      await api.post(`/api/orders/${id}/eta`, { addMinutes });
-      toast(`ETA extended +${addMinutes}m`, "success");
-      refresh();
-    } catch (e: any) {
-      toast(e.message, "error");
-    }
-  }
-
   async function extendItemEta(orderId: string, itemId: string, addMinutes: number) {
     try {
       await api.post(`/api/orders/${orderId}/items/${itemId}/eta`, { addMinutes });
-      toast(`Item ETA +${addMinutes}m`, "success");
+      toast("ETA updated", "success");
       refresh();
     } catch (e: any) {
       toast(e.message, "error");
@@ -530,7 +443,6 @@ export default function KdsPage() {
             o={o}
             tick={tick}
             onAction={action}
-            onAdjustEta={extendEta}
             onAdjustItemEta={extendItemEta}
             onRecipes={setRecipesOpen}
             onViewDetails={setDetailOrder}
