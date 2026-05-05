@@ -10,11 +10,11 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useAuth } from "@/lib/AuthProvider";
+import { useAuth } from "@dinova/lib/AuthProvider";
 import { NotificationsPanel } from "./NotificationsPanel";
 import { CommandPalette, openCommandPalette } from "./CommandPalette";
 import { OutletSwitcher } from "./OutletSwitcher";
-import { canAccess } from "@/lib/roles";
+import { canAccess } from "@dinova/lib/roles";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";

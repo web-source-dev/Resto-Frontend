@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Bell, X } from "lucide-react";
-import { useAuth } from "@/lib/AuthProvider";
+import { useAuth } from "@dinova/lib/AuthProvider";
 import {
   pushSupported,
   subscribeToPushNotifications,
   syncPushSubscriptionIfGranted,
-} from "@/lib/pushNotifications";
+} from "@dinova/lib/pushNotifications";
 import { useToast } from "./Toaster";
 
 const DISMISS_KEY = "ff_push_banner_dismissed_session";
@@ -94,7 +94,7 @@ export function PushNotificationPrompt() {
           <p className="text-sm text-ink-800">
             <span className="font-semibold text-ink-900">Turn on push alerts</span>
             {" · "}
-            Get instant notifications with sound when orders or kitchen events happen — works even when FlavorFlow is closed.
+            Get instant notifications with sound when orders or kitchen events happen — works even when Dinova is closed.
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">

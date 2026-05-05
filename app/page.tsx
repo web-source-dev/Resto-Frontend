@@ -13,17 +13,17 @@ import {
   Users,
   Utensils,
 } from "lucide-react";
-import { Card, Kpi, PageHeader, Progress, StatusBadge } from "@/components/ui";
-import { RevenueChart } from "@/components/charts/RevenueChart";
-import { ChannelChart } from "@/components/charts/ChannelChart";
-import { WeekBars } from "@/components/charts/WeekBars";
-import { useApi } from "@/lib/useApi";
-import { useSocketEvent } from "@/lib/SocketProvider";
+import { Card, Kpi, PageHeader, Progress, StatusBadge } from "@dinova/components/ui";
+import { RevenueChart } from "@dinova/components/charts/RevenueChart";
+import { ChannelChart } from "@dinova/components/charts/ChannelChart";
+import { WeekBars } from "@dinova/components/charts/WeekBars";
+import { useApi } from "@dinova/lib/useApi";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
 import { useCallback } from "react";
-import { useAuth } from "@/lib/AuthProvider";
-import { api } from "@/lib/api";
-import { downloadText, toCSV } from "@/lib/export";
-import { useToast } from "@/components/Toaster";
+import { useAuth } from "@dinova/lib/AuthProvider";
+import { api } from "@dinova/lib/api";
+import { downloadText, toCSV } from "@dinova/lib/export";
+import { useToast } from "@dinova/components/Toaster";
 
 type OverviewData = {
   kpis: {

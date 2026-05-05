@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Building2, ChevronsUpDown, Check, Plus } from "lucide-react";
-import { api, setToken } from "@/lib/api";
+import { api, setToken } from "@dinova/lib/api";
 import { useToast } from "./Toaster";
 
 export function OutletSwitcher() {

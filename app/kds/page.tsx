@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader } from "@/components/ui";
+import { PageHeader } from "@dinova/components/ui";
 import {
   Clock,
   Flame,
@@ -14,14 +14,14 @@ import {
   Package,
 } from "lucide-react";
 import clsx from "clsx";
-import { useApi } from "@/lib/useApi";
+import { useApi } from "@dinova/lib/useApi";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
-import { api } from "@/lib/api";
-import { useToast } from "@/components/Toaster";
-import { Modal } from "@/components/Modal";
-import { OrderDetailModal } from "@/components/OrderDetailModal";
-import { useAuth } from "@/lib/AuthProvider";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
+import { api } from "@dinova/lib/api";
+import { useToast } from "@dinova/components/Toaster";
+import { Modal } from "@dinova/components/Modal";
+import { OrderDetailModal } from "@dinova/components/OrderDetailModal";
+import { useAuth } from "@dinova/lib/AuthProvider";
 
 const stationList = ["All", "Grill", "Fryer", "Cold", "Drinks", "Oven"];
 

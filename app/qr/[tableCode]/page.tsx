@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { qrApi } from "@/lib/qrApi";
-import { SOCKET_URL } from "@/lib/config";
+import { qrApi } from "@dinova/lib/qrApi";
+import { SOCKET_URL } from "@dinova/lib/config";
 import { io, Socket } from "socket.io-client";
 import {
-  Flame,
   Search,
   X,
   Plus,
@@ -33,7 +32,7 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import Link from "next/link";
-import { ReviewPromptCard } from "@/components/ReviewPromptCard";
+import { ReviewPromptCard } from "@dinova/components/ReviewPromptCard";
 
 type MenuItem = {
   id: string;
@@ -628,7 +627,7 @@ export default function QRMenuPage() {
             </p>
             <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-ink-500">
               <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
-              Made fresh · FlavorFlow
+              Made fresh · Dinova
             </div>
           </div>
         )}
@@ -832,15 +831,21 @@ function Hero({ outlet, table }: { outlet: any; table: any }) {
 
       <div className="relative max-w-2xl mx-auto px-5 pt-7 pb-16 text-white">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
-            <Flame className="w-5 h-5 text-brand-200" strokeWidth={2.5} />
+          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl border border-white/25 bg-white shadow-md">
+            <img
+              src="/android-chrome-192x192.png"
+              alt=""
+              width={44}
+              height={44}
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-semibold">
-              FlavorFlow
+              Dinova
             </p>
             <h1 className="text-[22px] font-bold tracking-tight leading-tight truncate">
-              {outlet?.name?.replace(/^FlavorFlow\s*[—-]?\s*/i, "") ?? "Welcome"}
+              {outlet?.name?.replace(/^Dinova\s*[—-]?\s*/i, "") ?? "Welcome"}
             </h1>
           </div>
           <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[11px] font-medium text-emerald-200">
@@ -1474,7 +1479,7 @@ function CartSheet({
                   <div className="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-white/15 blur-2xl pointer-events-none" />
                   <div className="relative">
                     <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/90 mb-1">
-                      <Sparkles className="w-3 h-3" /> Join FlavorFlow loyalty
+                      <Sparkles className="w-3 h-3" /> Join Dinova loyalty
                     </div>
                     <p className="text-[15px] font-extrabold leading-tight">
                       Earn{" "}

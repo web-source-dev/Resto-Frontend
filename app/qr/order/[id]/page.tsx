@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { qrApi } from "@/lib/qrApi";
-import { SOCKET_URL } from "@/lib/config";
+import { qrApi } from "@dinova/lib/qrApi";
+import { SOCKET_URL } from "@dinova/lib/config";
 import { io, Socket } from "socket.io-client";
-import { ReviewPromptCard } from "@/components/ReviewPromptCard";
+import { ReviewPromptCard } from "@dinova/components/ReviewPromptCard";
 import {
   Flame,
   CheckCircle2,
@@ -53,7 +53,7 @@ function LoyaltyStrip({ loyalty }: { loyalty: any }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-[0.18em] font-bold text-white/80">
-              {isFirst ? "Welcome to FlavorFlow loyalty" : `Welcome back, ${(loyalty.name ?? "guest").split(" ")[0]}`}
+              {isFirst ? "Welcome to Dinova loyalty" : `Welcome back, ${(loyalty.name ?? "guest").split(" ")[0]}`}
             </p>
             <p className="text-lg font-extrabold leading-tight">
               {tier} member · {points.toLocaleString()} pts

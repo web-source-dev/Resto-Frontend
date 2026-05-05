@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Modal } from "@/components/Modal";
-import { StatusBadge } from "@/components/ui";
-import { AppendItemsDialog } from "@/components/AppendItemsDialog";
-import { UseSuppliesDialog } from "@/components/UseSuppliesDialog";
-import { api } from "@/lib/api";
-import { useToast } from "@/components/Toaster";
-import { useSocketEvent } from "@/lib/SocketProvider";
+import { Modal } from "@dinova/components/Modal";
+import { StatusBadge } from "@dinova/components/ui";
+import { AppendItemsDialog } from "@dinova/components/AppendItemsDialog";
+import { UseSuppliesDialog } from "@dinova/components/UseSuppliesDialog";
+import { api } from "@dinova/lib/api";
+import { useToast } from "@dinova/components/Toaster";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
 import { Plus, X, Package } from "lucide-react";
 import clsx from "clsx";
 

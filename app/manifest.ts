@@ -2,16 +2,25 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "FlavorFlow RMS",
-    short_name: "FlavorFlow",
-    description: "Restaurant management system with realtime operations.",
+    name: "Dinova — Smart Restaurant Solution",
+    short_name: "Dinova",
+    description:
+      "Restaurant management with realtime operations — Dinova smart restaurant solution.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#f97316",
+    theme_color: "#f58220",
     icons: [
-      { src: "/icons/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
-      { src: "/icons/icon-512.svg", sizes: "512x512", type: "image/svg+xml" },
+      {
+        src: "/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
     ],
   };
 }

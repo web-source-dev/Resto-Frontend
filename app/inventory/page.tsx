@@ -1,17 +1,17 @@
 "use client";
 
-import { PageHeader, Card, StatusBadge, Progress } from "@/components/ui";
+import { PageHeader, Card, StatusBadge, Progress } from "@dinova/components/ui";
 import { Plus, Download, FileText, TrendingDown, Truck } from "lucide-react";
-import { useApi } from "@/lib/useApi";
+import { useApi } from "@dinova/lib/useApi";
 import { useCallback, useMemo, useState } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
-import { api } from "@/lib/api";
-import { Modal, Field, Input, Select } from "@/components/Modal";
-import { useToast } from "@/components/Toaster";
-import { NewPOModal } from "@/components/NewPOModal";
-import { downloadText, toCSV } from "@/lib/export";
-import { useAuth } from "@/lib/AuthProvider";
-import { canPerform } from "@/lib/roles";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
+import { api } from "@dinova/lib/api";
+import { Modal, Field, Input, Select } from "@dinova/components/Modal";
+import { useToast } from "@dinova/components/Toaster";
+import { NewPOModal } from "@dinova/components/NewPOModal";
+import { downloadText, toCSV } from "@dinova/lib/export";
+import { useAuth } from "@dinova/lib/AuthProvider";
+import { canPerform } from "@dinova/lib/roles";
 
 export default function InventoryPage() {
   const { data, refresh } = useApi<{ items: any[] }>("/api/inventory");

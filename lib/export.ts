@@ -134,10 +134,10 @@ export async function generateTableQRs(
 
     i++;
   }
-  doc.save(`FlavorFlow-table-QRs-${Date.now()}.pdf`);
+  doc.save(`Dinova-table-QRs-${Date.now()}.pdf`);
 }
 
-export async function generatePdfReceipt(order: any, outletName = "FlavorFlow") {
+export async function generatePdfReceipt(order: any, outletName = "Dinova") {
   const { default: jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "mm", format: [80, 200] });
   let y = 10;

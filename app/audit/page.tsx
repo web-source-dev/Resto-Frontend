@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { PageHeader, Card } from "@/components/ui";
+import { PageHeader, Card } from "@dinova/components/ui";
 import { Shield, Search, Filter, RefreshCw, Download } from "lucide-react";
-import { useApi } from "@/lib/useApi";
-import { api } from "@/lib/api";
+import { useApi } from "@dinova/lib/useApi";
+import { api } from "@dinova/lib/api";
 import clsx from "clsx";
-import { downloadText, toCSV } from "@/lib/export";
+import { downloadText, toCSV } from "@dinova/lib/export";
 
 type AuditEntry = {
   id: string;

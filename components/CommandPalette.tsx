@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api } from "@/lib/api";
+import { api } from "@dinova/lib/api";
 import { Search, X, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type Result = { type: string; id: string; title: string; sub: string; link: string };
 
 export function openCommandPalette() {
-  document.dispatchEvent(new CustomEvent("flavorflow:open-palette"));
+  document.dispatchEvent(new CustomEvent("dinova:open-palette"));
 }
 
 export function CommandPalette() {
@@ -32,10 +32,10 @@ export function CommandPalette() {
       setOpen(true);
     }
     document.addEventListener("keydown", onKey);
-    document.addEventListener("flavorflow:open-palette", onOpen as any);
+    document.addEventListener("dinova:open-palette", onOpen as any);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.removeEventListener("flavorflow:open-palette", onOpen as any);
+      document.removeEventListener("dinova:open-palette", onOpen as any);
     };
   }, []);
 

@@ -4,9 +4,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { useAuth } from "@/lib/AuthProvider";
+import { useAuth } from "@dinova/lib/AuthProvider";
 import { Flame } from "lucide-react";
-import { canAccess, homeFor } from "@/lib/roles";
+import { canAccess, homeFor } from "@dinova/lib/roles";
 
 const PUBLIC_PATHS = ["/login", "/register"];
 const PUBLIC_PREFIXES = ["/qr"];
@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center animate-pulseDot">
             <Flame className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
-          <div className="text-sm text-ink-500">Loading FlavorFlow…</div>
+          <div className="text-sm text-ink-500">Loading Dinova…</div>
         </div>
       </div>
     );

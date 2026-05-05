@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, StatusBadge } from "@/components/ui";
+import { PageHeader, Card, StatusBadge } from "@dinova/components/ui";
 import {
   Filter,
   Download,
@@ -12,17 +12,17 @@ import {
   Inbox,
   Eye,
 } from "lucide-react";
-import { useApi } from "@/lib/useApi";
+import { useApi } from "@dinova/lib/useApi";
 import { useCallback, useMemo, useState } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
-import { NewOrderModal } from "@/components/NewOrderModal";
-import { api } from "@/lib/api";
-import { useToast } from "@/components/Toaster";
-import { useAuth } from "@/lib/AuthProvider";
-import { canPerform } from "@/lib/roles";
-import { Modal, Field, Input, Select } from "@/components/Modal";
-import { downloadText, toCSV, generatePdfReceipt } from "@/lib/export";
-import { OrderDetailModal } from "@/components/OrderDetailModal";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
+import { NewOrderModal } from "@dinova/components/NewOrderModal";
+import { api } from "@dinova/lib/api";
+import { useToast } from "@dinova/components/Toaster";
+import { useAuth } from "@dinova/lib/AuthProvider";
+import { canPerform } from "@dinova/lib/roles";
+import { Modal, Field, Input, Select } from "@dinova/components/Modal";
+import { downloadText, toCSV, generatePdfReceipt } from "@dinova/lib/export";
+import { OrderDetailModal } from "@dinova/components/OrderDetailModal";
 
 const PAGE_SIZE = 25;
 

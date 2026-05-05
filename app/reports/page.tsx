@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card } from "@/components/ui";
+import { PageHeader, Card } from "@dinova/components/ui";
 import {
   Download,
   Calendar,
@@ -15,12 +15,12 @@ import {
   Shield,
   Utensils,
 } from "lucide-react";
-import { ReportTrend } from "@/components/charts/ReportTrend";
-import { useApi } from "@/lib/useApi";
+import { ReportTrend } from "@dinova/components/charts/ReportTrend";
+import { useApi } from "@dinova/lib/useApi";
 import { useMemo, useState } from "react";
-import { Modal, Field, Input, Select } from "@/components/Modal";
-import { useToast } from "@/components/Toaster";
-import { downloadText, toCSV } from "@/lib/export";
+import { Modal, Field, Input, Select } from "@dinova/components/Modal";
+import { useToast } from "@dinova/components/Toaster";
+import { downloadText, toCSV } from "@dinova/lib/export";
 import clsx from "clsx";
 
 // ── Range presets ────────────────────────────────────────────────────────

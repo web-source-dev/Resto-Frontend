@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, StatusBadge } from "@/components/ui";
+import { PageHeader, Card, StatusBadge } from "@dinova/components/ui";
 import {
   Building2,
   Receipt,
@@ -28,12 +28,12 @@ import {
   Download,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useAuth } from "@/lib/AuthProvider";
-import { useApi } from "@/lib/useApi";
-import { api, getToken } from "@/lib/api";
-import { API_URL } from "@/lib/config";
-import { Modal, Field, Input, Select, Textarea } from "@/components/Modal";
-import { useToast } from "@/components/Toaster";
+import { useAuth } from "@dinova/lib/AuthProvider";
+import { useApi } from "@dinova/lib/useApi";
+import { api, getToken } from "@dinova/lib/api";
+import { API_URL } from "@dinova/lib/config";
+import { Modal, Field, Input, Select, Textarea } from "@dinova/components/Modal";
+import { useToast } from "@dinova/components/Toaster";
 import clsx from "clsx";
 
 type Panel =
@@ -912,7 +912,7 @@ function IntegrationsEditor({
           return;
         }
         body.to = testTo.trim();
-        if (id === "email") body.subject = "FlavorFlow test";
+        if (id === "email") body.subject = "Dinova test";
       }
       const r = await api.post<any>(`/api/settings/providers/${id}/test`, body);
       if (r.ok === false) toast(r.error ?? "Failed", "error");
@@ -2014,7 +2014,7 @@ function ReceiptEditor({
         <Textarea
           value={form.receiptHeader ?? ""}
           onChange={(e) => setForm({ ...form, receiptHeader: e.target.value })}
-          placeholder="Welcome to FlavorFlow!"
+          placeholder="Welcome to Dinova!"
           rows={2}
         />
       </Field>
@@ -2337,7 +2337,7 @@ function WebhooksPanel({
           </div>
         )}
         <p className="text-[11px] text-ink-400 mt-4 leading-snug">
-          Each delivery carries <span className="font-mono">X-FlavorFlow-Signature</span>
+          Each delivery carries <span className="font-mono">X-Dinova-Signature</span>
           {" "}— verify by computing <span className="font-mono">HMAC-SHA256(secret, timestamp + "." + body)</span>.
         </p>
       </Modal>
@@ -2610,7 +2610,7 @@ function ApiKeysPanel({
 
       {items.length === 0 ? (
         <p className="text-sm text-ink-500 text-center py-4">
-          No keys yet. Create one above to access FlavorFlow programmatically.
+          No keys yet. Create one above to access Dinova programmatically.
         </p>
       ) : (
         <div className="space-y-2">
@@ -2720,7 +2720,7 @@ function BackupPanel({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `flavorflow-backup-${Date.now()}.json`;
+      a.download = `dinova-backup-${Date.now()}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();

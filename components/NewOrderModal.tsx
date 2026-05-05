@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Modal, Field, Input, Select, Textarea } from "./Modal";
 import { Minus, Plus, Search, Trash2, Ticket, Sparkles } from "lucide-react";
 import clsx from "clsx";
-import { api } from "@/lib/api";
+import { api } from "@dinova/lib/api";
 import { useToast } from "./Toaster";
 
 type MenuItem = {

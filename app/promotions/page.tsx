@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, Progress } from "@/components/ui";
+import { PageHeader, Card, Progress } from "@dinova/components/ui";
 import {
   Plus,
   Ticket,
@@ -13,11 +13,11 @@ import {
   Calendar,
   Tag,
 } from "lucide-react";
-import { useApi } from "@/lib/useApi";
+import { useApi } from "@dinova/lib/useApi";
 import { useEffect, useMemo, useState } from "react";
-import { api } from "@/lib/api";
-import { Modal, Field, Input, Select, Textarea } from "@/components/Modal";
-import { useToast } from "@/components/Toaster";
+import { api } from "@dinova/lib/api";
+import { Modal, Field, Input, Select, Textarea } from "@dinova/components/Modal";
+import { useToast } from "@dinova/components/Toaster";
 import clsx from "clsx";
 
 const PROMO_TYPES = [

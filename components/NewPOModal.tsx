@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Modal, Field, Input, Select, Textarea } from "./Modal";
-import { api } from "@/lib/api";
+import { api } from "@dinova/lib/api";
 import { useToast } from "./Toaster";
 import { Plus, Trash2 } from "lucide-react";
 

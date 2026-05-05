@@ -1,17 +1,43 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AppShell } from "@/components/AppShell";
-import { PwaBootstrap } from "@/components/PwaBootstrap";
-import { AuthProvider } from "@/lib/AuthProvider";
-import { SocketProvider } from "@/lib/SocketProvider";
-import { ToastProvider } from "@/components/Toaster";
+import { AppShell } from "@dinova/components/AppShell";
+import { PwaBootstrap } from "@dinova/components/PwaBootstrap";
+import { AuthProvider } from "@dinova/lib/AuthProvider";
+import { SocketProvider } from "@dinova/lib/SocketProvider";
+import { ToastProvider } from "@dinova/components/Toaster";
 
 export const metadata: Metadata = {
-  title: "FlavorFlow RMS — Admin Console",
+  applicationName: "Dinova",
+  title: {
+    default: "Dinova — Smart Restaurant Solution",
+    template: "%s · Dinova",
+  },
   description:
-    "FlavorFlow Restaurant Management System — one operating system for orders, kitchen, inventory, staff, and revenue.",
+    "Dinova — smart restaurant operations for orders, kitchen, inventory, staff, and revenue.",
   manifest: "/manifest.webmanifest",
-  themeColor: "#f97316",
+  themeColor: "#f58220",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      {
+        url: "/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Dinova",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({

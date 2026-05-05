@@ -1,12 +1,12 @@
 "use client";
 
-import { PageHeader, Card, StatusBadge } from "@/components/ui";
-import { useApi } from "@/lib/useApi";
+import { PageHeader, Card, StatusBadge } from "@dinova/components/ui";
+import { useApi } from "@dinova/lib/useApi";
 import { useCallback, useState } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
-import { api } from "@/lib/api";
-import { useToast } from "@/components/Toaster";
-import { useAuth } from "@/lib/AuthProvider";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
+import { api } from "@dinova/lib/api";
+import { useToast } from "@dinova/components/Toaster";
+import { useAuth } from "@dinova/lib/AuthProvider";
 import {
   Bike,
   MapPin,
@@ -23,7 +23,7 @@ import {
   AlertTriangle,
   ChevronRight,
 } from "lucide-react";
-import { Modal, Field, Input, Textarea, Select } from "@/components/Modal";
+import { Modal, Field, Input, Textarea, Select } from "@dinova/components/Modal";
 import clsx from "clsx";
 
 export default function DeliveryPage() {

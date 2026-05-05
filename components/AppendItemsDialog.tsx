@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Modal } from "@/components/Modal";
-import { api } from "@/lib/api";
-import { useToast } from "@/components/Toaster";
+import { Modal } from "@dinova/components/Modal";
+import { api } from "@dinova/lib/api";
+import { useToast } from "@dinova/components/Toaster";
 import { Search, Minus, Plus } from "lucide-react";
 
 type MenuItem = {

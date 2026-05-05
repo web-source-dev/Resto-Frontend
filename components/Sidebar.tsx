@@ -14,7 +14,6 @@ import {
   UserRound,
   BarChart3,
   Settings,
-  Flame,
   Sparkles,
   ClipboardCheck,
   Bike,
@@ -22,8 +21,8 @@ import {
   Ticket,
 } from "lucide-react";
 import clsx from "clsx";
-import { useAuth } from "@/lib/AuthProvider";
-import { canAccess, Role } from "@/lib/roles";
+import { useAuth } from "@dinova/lib/AuthProvider";
+import { canAccess, Role } from "@dinova/lib/roles";
 
 export type NavItem = { href: string; label: string; icon: any };
 
@@ -115,15 +114,21 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 shrink-0 flex-col border-r border-ink-200/70 bg-white lg:flex">
       <div className="h-16 px-5 flex items-center gap-2.5 border-b border-ink-200/70">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-sm">
-          <Flame className="w-5 h-5 text-white" strokeWidth={2.5} />
+        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-ink-200/70">
+          <img
+            src="/android-chrome-192x192.png"
+            alt=""
+            width={36}
+            height={36}
+            className="h-full w-full object-cover"
+          />
         </div>
         <div className="leading-tight">
           <div className="font-semibold text-ink-900 text-[15px] tracking-tight">
-            FlavorFlow
+            Dinova
           </div>
           <div className="text-[11px] text-ink-500 capitalize">
-            {user?.role ? `${user.role} · Console` : "RMS · Admin Console"}
+            {user?.role ? `${user.role} · Console` : "Smart restaurant console"}
           </div>
         </div>
       </div>

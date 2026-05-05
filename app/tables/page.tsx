@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, StatusBadge, Card } from "@/components/ui";
+import { PageHeader, StatusBadge, Card } from "@dinova/components/ui";
 import {
   QrCode,
   Plus,
@@ -14,13 +14,13 @@ import {
   Trash2,
 } from "lucide-react";
 import clsx from "clsx";
-import { useApi } from "@/lib/useApi";
+import { useApi } from "@dinova/lib/useApi";
 import { useCallback, useEffect, useState } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
-import { api } from "@/lib/api";
-import { Modal, Field, Input, Select } from "@/components/Modal";
-import { useToast } from "@/components/Toaster";
-import { generateTableQRs } from "@/lib/export";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
+import { api } from "@dinova/lib/api";
+import { Modal, Field, Input, Select } from "@dinova/components/Modal";
+import { useToast } from "@dinova/components/Toaster";
+import { generateTableQRs } from "@dinova/lib/export";
 
 const statuses = ["Free", "Occupied", "Reserved", "Cleaning"];
 
@@ -233,7 +233,7 @@ export default function TablesPage() {
                 await generateTableQRs(
                   tables.map((t: any) => ({ code: t.code, zone: t.zone })),
                   window.location.origin,
-                  "FlavorFlow · Gulberg"
+                  "Dinova · Gulberg"
                 );
                 toast("QR codes PDF downloaded", "success");
               }}

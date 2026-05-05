@@ -1,6 +1,5 @@
 {
   "/page": "app/page.js",
-  "/delivery/page": "app/delivery/page.js",
-  "/settings/page": "app/settings/page.js",
-  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js"
+  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
+  "/login/page": "app/login/page.js"
 }

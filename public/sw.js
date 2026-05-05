@@ -1,5 +1,5 @@
-const CACHE_NAME = "flavorflow-v3";
-const CORE_ASSETS = ["/", "/manifest.webmanifest"];
+const CACHE_NAME = "dinova-v1";
+const CORE_ASSETS = ["/", "/manifest.webmanifest", "/site.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS)));
@@ -25,7 +25,7 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("push", (event) => {
   event.waitUntil(
     (async () => {
-      let title = "FlavorFlow";
+      let title = "Dinova";
       let body = "You have a new notification.";
       let url = "/";
       let tag = `ff-${Date.now()}`;
@@ -54,14 +54,14 @@ self.addEventListener("push", (event) => {
           includeUncontrolled: true,
         });
         for (const client of clientList) {
-          client.postMessage({ type: "ff-push-received", level });
+          client.postMessage({ type: "dinova-push-received", level });
         }
       } catch (_) {}
 
       await self.registration.showNotification(title, {
         body,
-        icon: "/icons/icon-192.svg",
-        badge: "/icons/icon-192.svg",
+        icon: "/android-chrome-192x192.png",
+        badge: "/android-chrome-192x192.png",
         tag,
         renotify: true,
         silent: false,

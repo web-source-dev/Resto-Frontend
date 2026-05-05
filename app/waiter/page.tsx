@@ -1,14 +1,14 @@
 "use client";
 
-import { PageHeader, Card, StatusBadge } from "@/components/ui";
-import { useApi } from "@/lib/useApi";
+import { PageHeader, Card, StatusBadge } from "@dinova/components/ui";
+import { useApi } from "@dinova/lib/useApi";
 import { useCallback } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
-import { api } from "@/lib/api";
-import { useToast } from "@/components/Toaster";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
+import { api } from "@dinova/lib/api";
+import { useToast } from "@dinova/components/Toaster";
 import { Bell, CheckCircle2, Timer, Users } from "lucide-react";
 import clsx from "clsx";
-import { useAuth } from "@/lib/AuthProvider";
+import { useAuth } from "@dinova/lib/AuthProvider";
 
 function elapsed(d?: string) {
   if (!d) return "";

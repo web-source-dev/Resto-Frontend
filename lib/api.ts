@@ -2,7 +2,7 @@
 
 import { API_URL } from "./config";
 
-const TOKEN_KEY = "flavorflow_token";
+const TOKEN_KEY = "dinova_token";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;

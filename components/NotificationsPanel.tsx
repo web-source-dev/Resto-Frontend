@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api } from "@/lib/api";
-import { useSocketEvent } from "@/lib/SocketProvider";
+import { api } from "@dinova/lib/api";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
 import { Bell, AlertTriangle, CheckCircle2, Info, X, ExternalLink } from "lucide-react";
 import clsx from "clsx";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import {
   pushSupported,
   subscribeToPushNotifications,
   syncPushSubscriptionIfGranted,
-} from "@/lib/pushNotifications";
+} from "@dinova/lib/pushNotifications";
 
 type N = {
   id: string;

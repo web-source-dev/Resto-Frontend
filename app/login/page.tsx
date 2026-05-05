@@ -1,21 +1,20 @@
 "use client";
 
-import { Flame } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "@/lib/AuthProvider";
+import { useAuth } from "@dinova/lib/AuthProvider";
 
 const demos = [
-  { role: "Admin", email: "admin@flavorflow.dev", password: "admin123" },
-  { role: "Manager", email: "manager@flavorflow.dev", password: "manager123" },
-  { role: "Receptionist", email: "receptionist@flavorflow.dev", password: "recept123" },
-  { role: "Waiter", email: "waiter@flavorflow.dev", password: "waiter123" },
-  { role: "Kitchen", email: "kitchen@flavorflow.dev", password: "kitchen123" },
-  { role: "Rider", email: "rider@flavorflow.dev", password: "rider123" },
+  { role: "Admin", email: "admin@dinova.dev", password: "admin123" },
+  { role: "Manager", email: "manager@dinova.dev", password: "manager123" },
+  { role: "Receptionist", email: "receptionist@dinova.dev", password: "recept123" },
+  { role: "Waiter", email: "waiter@dinova.dev", password: "waiter123" },
+  { role: "Kitchen", email: "kitchen@dinova.dev", password: "kitchen123" },
+  { role: "Rider", email: "rider@dinova.dev", password: "rider123" },
 ];
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const [email, setEmail] = useState("admin@flavorflow.dev");
+  const [email, setEmail] = useState("admin@dinova.dev");
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,14 +50,20 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-ink-50 via-white to-brand-50 p-4 sm:flex sm:items-center sm:justify-center sm:p-6">
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center gap-3 sm:mb-8">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-pop">
-            <Flame className="w-6 h-6 text-white" strokeWidth={2.5} />
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white shadow-pop ring-1 ring-ink-200/80">
+            <img
+              src="/apple-touch-icon.png"
+              alt=""
+              width={56}
+              height={56}
+              className="h-full w-full object-cover"
+            />
           </div>
           <div>
             <div className="font-bold text-ink-900 text-xl tracking-tight">
-              FlavorFlow
+              Dinova
             </div>
-            <div className="text-xs text-ink-500">RMS · Multi-role Console</div>
+            <div className="text-xs text-ink-500">Smart restaurant solution · Multi-role console</div>
           </div>
         </div>
 

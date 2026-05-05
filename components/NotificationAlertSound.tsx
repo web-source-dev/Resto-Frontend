@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSocketEvent } from "@/lib/SocketProvider";
+import { useSocketEvent } from "@dinova/lib/SocketProvider";
 import {
   notificationSoundEnabled,
   playNotificationBeepDebounced,
   unlockAudioOutput,
   type NotificationLevel,
-} from "@/lib/notificationSound";
+} from "@dinova/lib/notificationSound";
 
 const VALID_LEVELS: ReadonlySet<NotificationLevel> = new Set([
   "info",
@@ -41,7 +41,7 @@ export function NotificationAlertSound() {
 
   useEffect(() => {
     function onWindowMessage(e: MessageEvent) {
-      if (e.data?.type !== "ff-push-received") return;
+      if (e.data?.type !== "dinova-push-received") return;
       if (!notificationSoundEnabled()) return;
       void playNotificationBeepDebounced(coerceLevel(e.data?.level));
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, Card, StatusBadge } from "@/components/ui";
+import { PageHeader, Card, StatusBadge } from "@dinova/components/ui";
 import {
   Plus,
   Search,
@@ -13,15 +13,15 @@ import {
   BookOpen,
 } from "lucide-react";
 import clsx from "clsx";
-import { useApi } from "@/lib/useApi";
+import { useApi } from "@dinova/lib/useApi";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api } from "@/lib/api";
-import { Modal, Field, Input, Select } from "@/components/Modal";
-import { useToast } from "@/components/Toaster";
-import { useAuth } from "@/lib/AuthProvider";
-import { canPerform } from "@/lib/roles";
-import { downloadText, parseCSV, toCSV } from "@/lib/export";
-import { RecipeEditor, RecipeLine } from "@/components/RecipeEditor";
+import { api } from "@dinova/lib/api";
+import { Modal, Field, Input, Select } from "@dinova/components/Modal";
+import { useToast } from "@dinova/components/Toaster";
+import { useAuth } from "@dinova/lib/AuthProvider";
+import { canPerform } from "@dinova/lib/roles";
+import { downloadText, parseCSV, toCSV } from "@dinova/lib/export";
+import { RecipeEditor, RecipeLine } from "@dinova/components/RecipeEditor";
 
 function tagColor(tag: string) {
   const map: Record<string, string> = {

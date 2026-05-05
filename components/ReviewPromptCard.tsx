@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { qrApi } from "@/lib/qrApi";
+import { qrApi } from "@dinova/lib/qrApi";
 import {
   Star,
   CheckCircle2,
@@ -84,7 +84,7 @@ export function ReviewPromptCard({ order, onSubmitted, onDismiss }: Props) {
             </p>
             {good && (
               <a
-                href="https://www.google.com/search?q=FlavorFlow+Gulberg"
+                href="https://www.google.com/search?q=Dinova+Gulberg"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 mt-4 px-4 py-2.5 rounded-full bg-white text-ink-900 font-semibold text-sm hover:bg-white/90"
